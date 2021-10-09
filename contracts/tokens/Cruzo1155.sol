@@ -24,7 +24,7 @@ contract Cruzo1155 is ERC1155Supply, Pausable, Ownable {
         marketAddress = _marketAddress;
     }
 
-    function setURI(string memory _uri) public returns (bool) {
+    function setURI(string calldata _uri) public returns (bool) {
         _setURI(_uri);
         return true;
     }
@@ -73,9 +73,10 @@ contract Cruzo1155 is ERC1155Supply, Pausable, Ownable {
     function _mintTokens(
         uint256 _tokenId,
         uint256 _amount,
-        address _to
+        address _to,
+        bytes memory _data
     ) internal returns (uint256) {
-        _mint(_to, _tokenId, _amount, "");
+        _mint(_to, _tokenId, _amount, _data);
         setApprovalForAll(marketAddress, true);
         return _tokenId;
     }
@@ -87,13 +88,14 @@ contract Cruzo1155 is ERC1155Supply, Pausable, Ownable {
      * @param _amount - The amount of tokens to be minted
      * @dev Used internally to mint new tokens
      */
-    function _mintNewTokens(uint256 _amount, address _to)
-        internal
-        returns (uint256)
-    {
+    function _mintNewTokens(
+        uint256 _amount,
+        address _to,
+        bytes memory _data
+    ) internal returns (uint256) {
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
-        return _mintTokens(newItemId, _amount, _to);
+        return _mintTokens(newItemId, _amount, _to, _data);
     }
 
     /**
@@ -104,12 +106,12 @@ contract Cruzo1155 is ERC1155Supply, Pausable, Ownable {
      * @dev Mint a new token  to `to` address
      *
      */
-    function mintNewTo(uint256 _amount, address _to)
-        public
-        onlyOwner
-        returns (uint256)
-    {
-        return _mintNewTokens(_amount, _to);
+    function mintNewTo(
+        uint256 _amount,
+        address _to,
+        bytes memory _data
+    ) public onlyOwner returns (uint256) {
+        return _mintNewTokens(_amount, _to, _data);
     }
 
     /**
@@ -119,8 +121,12 @@ contract Cruzo1155 is ERC1155Supply, Pausable, Ownable {
      * @dev Mint a new token  to `msg.sender` address
      *
      */
-    function mintNew(uint256 _amount) public onlyOwner returns (uint256) {
-        return _mintNewTokens(_amount, msg.sender);
+    function mintNew(uint256 _amount, bytes memory _data)
+        public
+        onlyOwner
+        returns (uint256)
+    {
+        return _mintNewTokens(_amount, msg.sender, _data);
     }
 
     /**
@@ -135,13 +141,14 @@ contract Cruzo1155 is ERC1155Supply, Pausable, Ownable {
     function mintTo(
         uint256 _tokenId,
         uint256 _amount,
-        address _to
+        address _to,
+        bytes memory _data
     ) public onlyOwner returns (uint256) {
         require(
             _tokenIds.current() >= _tokenId,
             "token doesn't exist; try using `mintNewTo()`"
         );
-        return _mintTokens(_tokenId, _amount, _to);
+        return _mintTokens(_tokenId, _amount, _to, _data);
     }
 
     /**
@@ -152,15 +159,15 @@ contract Cruzo1155 is ERC1155Supply, Pausable, Ownable {
      * Requirements-
      *     - Token ID must exist
      */
-    function mint(uint256 _tokenId, uint256 _amount)
-        public
-        onlyOwner
-        returns (uint256)
-    {
+    function mint(
+        uint256 _tokenId,
+        uint256 _amount,
+        bytes memory _data
+    ) public onlyOwner returns (uint256) {
         require(
             _tokenIds.current() >= _tokenId,
             "token doesn't exist; try using `mintNew()`"
         );
-        return _mintTokens(_tokenId, _amount, msg.sender);
+        return _mintTokens(_tokenId, _amount, msg.sender, _data);
     }
 }
