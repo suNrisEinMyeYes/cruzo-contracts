@@ -106,27 +106,12 @@ contract Cruzo1155 is ERC1155Supply, Pausable, Ownable {
      * @dev Mint a new token  to `to` address
      *
      */
-    function mintNewTo(
+    function create(
         uint256 _amount,
         address _to,
         bytes memory _data
     ) public onlyOwner returns (uint256) {
         return _mintNewTokens(_amount, _to, _data);
-    }
-
-    /**
-     *
-     * @notice This function can be used to mint a new token to a `msg.sender`
-     * @param _amount - The amount of tokens to be minted
-     * @dev Mint a new token  to `msg.sender` address
-     *
-     */
-    function mintNew(uint256 _amount, bytes memory _data)
-        public
-        onlyOwner
-        returns (uint256)
-    {
-        return _mintNewTokens(_amount, msg.sender, _data);
     }
 
     /**
@@ -149,25 +134,5 @@ contract Cruzo1155 is ERC1155Supply, Pausable, Ownable {
             "token doesn't exist; try using `mintNewTo()`"
         );
         return _mintTokens(_tokenId, _amount, _to, _data);
-    }
-
-    /**
-     *
-     * @notice Mint a specific token to `msg.sender` address in `_amount` quantiy
-     * @param _tokenId The token ID to be minted
-     * @param _amount - The amount of tokens to be minted
-     * Requirements-
-     *     - Token ID must exist
-     */
-    function mint(
-        uint256 _tokenId,
-        uint256 _amount,
-        bytes memory _data
-    ) public onlyOwner returns (uint256) {
-        require(
-            _tokenIds.current() >= _tokenId,
-            "token doesn't exist; try using `mintNew()`"
-        );
-        return _mintTokens(_tokenId, _amount, msg.sender, _data);
     }
 }
