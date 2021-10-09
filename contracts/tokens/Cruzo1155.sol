@@ -3,13 +3,12 @@ pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Pausable.sol";
-import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
+import "./ERC1155BurnableSupply.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
 import "hardhat/console.sol";
 
-contract Cruzo1155 is ERC1155Supply, Pausable, Ownable {
+contract Cruzo1155 is ERC1155BurnableSupply, Pausable, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     address public marketAddress;

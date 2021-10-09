@@ -68,4 +68,29 @@ describe("Testing Cruzo1155 Contract", () => {
     expect(await token.balanceOf(signers[1].address, 2)).equal(2);
     await expect(token.connect(signers[1]).mintTo(1, 1, signers[1].address, [])).revertedWith("Ownable: caller is not the owner");
   });
+
+  it("Should update balance and totalSupply on burn", async () => {
+    await token.create(1000, admin.address, []);
+    expect(await token.totalSupply(1)).equal(1000);
+    expect(await token.balanceOf(admin.address, 1)).equal(1000);
+    await token.burn(admin.address, 1, 1);
+    expect(await token.balanceOf(admin.address, 1)).equal(999);
+    expect(await token.totalSupply(1)).equal(999);
+  });
+
+  it("Should not burn if msg.sender is not approved", async () => {
+    await token.create(1000, signers[1].address, []);
+    await expect(token.burn(signers[1].address, 1, 1)).to.revertedWith("ERC1155: caller is not owner nor approved");
+  });
+
+  it("Should update balance and totalSupply on burnBatch", async () => {
+    await token.create(1000, admin.address, []);
+    await token.create(1000, admin.address, []);
+    await token.burnBatch(admin.address, [1, 2], [2, 2]);
+    const batchBal = await token.balanceOfBatch([admin.address, admin.address], [1, 2]);
+    expect(await token.totalSupply(1)).equal(998);
+    expect(await token.totalSupply(2)).equal(998);
+    expect(batchBal[0]).to.equal(998);
+    expect(batchBal[1]).to.equal(998);
+  });
 });
