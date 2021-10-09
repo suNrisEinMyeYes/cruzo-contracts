@@ -3,24 +3,27 @@ pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./ERC1155BurnableSupply.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
+
+import "./ERC1155BurnableSupply.sol";
 
 import "hardhat/console.sol";
 
-contract Cruzo1155 is ERC1155BurnableSupply, Pausable, Ownable {
+contract Cruzo1155 is ERC1155BurnableSupply, Pausable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     address public marketAddress;
 
     /**
-     * @dev See {ERC1155-_beforeTokenTransfer}.
-     * @param _marketAddress -> address of Cruzo marketplace which has all authorization on every token
+     *  @param _marketAddress -> address of Cruzo marketplace which has all authorization on every token
      */
     constructor(address _marketAddress)
         ERC1155("https://somthing.something/{id}.json")
     {
         marketAddress = _marketAddress;
+        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
+        _setupRole(MINTER_ROLE, _msgSender());
+        _setupRole(PAUSER_ROLE, _msgSender());
     }
 
     function setURI(string calldata _uri) public returns (bool) {

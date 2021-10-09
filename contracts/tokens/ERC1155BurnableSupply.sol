@@ -3,6 +3,8 @@
 pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
+import "@openzeppelin/contracts/utils/Context.sol";
+import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 
 /**
  * @dev Extension of {ERC1155} that allows token holders to destroy both their
@@ -10,7 +12,25 @@ import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
  *
  * _Available since v3.1._
  */
-abstract contract ERC1155BurnableSupply is ERC1155Supply {
+abstract contract ERC1155BurnableSupply is
+    Context,
+    AccessControlEnumerable,
+    ERC1155Supply
+{
+    bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
+
+    /**
+     * @dev Throws if called by any account other than the owner.
+     */
+    modifier onlyOwner() {
+        require(
+            hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
+            "Ownable: caller is not the owner"
+        );
+        _;
+    }
+
     function burn(
         address account,
         uint256 id,
@@ -35,5 +55,18 @@ abstract contract ERC1155BurnableSupply is ERC1155Supply {
         );
 
         _burnBatch(account, ids, values);
+    }
+
+    /**
+     * @dev See {IERC165-supportsInterface}.
+     */
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(AccessControlEnumerable, ERC1155)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
     }
 }
