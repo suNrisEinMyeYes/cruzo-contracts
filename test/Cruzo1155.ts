@@ -32,16 +32,12 @@ describe("Testing Cruzo1155 Contract", () => {
     expect(await token.total()).equal(0);
   });
 
-  it("Check Ownership", async () => {
-    expect(await token.owner()).eq(admin.address);
-  });
-
   it("Check mintNew function", async () => {
     await token.create(1000, admin.address, []);
     await token.create(1, admin.address, []);
     expect(await token.balanceOf(admin.address, 1)).equal(1000);
     expect(await token.balanceOf(admin.address, 2)).equal(1);
-    await expect(token.connect(signers[1]).create(1, signers[1].address, [])).revertedWith("Ownable: caller is not the owner");
+    await expect(token.connect(signers[1]).create(1, signers[1].address, [])).revertedWith("Ownable: caller is not the admin");
   });
 
   it("Check marketAddress approval", async () => {
@@ -56,7 +52,7 @@ describe("Testing Cruzo1155 Contract", () => {
     await token.create(1, signers[1].address, []);
     expect(await token.balanceOf(signers[1].address, 1)).equal(1000);
     expect(await token.balanceOf(signers[1].address, 2)).equal(1);
-    await expect(token.connect(signers[1]).create(1, signers[1].address, [])).revertedWith("Ownable: caller is not the owner");
+    await expect(token.connect(signers[1]).create(1, signers[1].address, [])).revertedWith("Ownable: caller is not the admin");
   });
 
   it("Check mintTo function", async () => {
@@ -66,7 +62,7 @@ describe("Testing Cruzo1155 Contract", () => {
     await token.mintTo(2, 1, signers[1].address, []);
     expect(await token.balanceOf(signers[1].address, 1)).equal(2);
     expect(await token.balanceOf(signers[1].address, 2)).equal(2);
-    await expect(token.connect(signers[1]).mintTo(1, 1, signers[1].address, [])).revertedWith("Ownable: caller is not the owner");
+    await expect(token.connect(signers[1]).mintTo(1, 1, signers[1].address, [])).revertedWith("Ownable: caller is not the admin");
   });
 
   it("Should update balance and totalSupply on burn", async () => {

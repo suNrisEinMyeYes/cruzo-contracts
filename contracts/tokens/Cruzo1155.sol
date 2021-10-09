@@ -4,10 +4,9 @@ pragma solidity ^0.8.7;
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "./ERC1155AccessControlledBurnable.sol";
 
-
 contract Cruzo1155 is ERC1155AccessControlledBurnable {
     using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds; 
+    Counters.Counter private _tokenIds;
     address public marketAddress;
 
     /**
@@ -105,7 +104,7 @@ contract Cruzo1155 is ERC1155AccessControlledBurnable {
         uint256 _amount,
         address _to,
         bytes memory _data
-    ) public onlyOwner returns (uint256) {
+    ) public onlyMinter returns (uint256) {
         return _mintNewTokens(_amount, _to, _data);
     }
 
@@ -123,7 +122,7 @@ contract Cruzo1155 is ERC1155AccessControlledBurnable {
         uint256 _amount,
         address _to,
         bytes memory _data
-    ) public onlyOwner returns (uint256) {
+    ) public onlyMinter returns (uint256) {
         require(
             _tokenIds.current() >= _tokenId,
             "token doesn't exist; try using `mintNewTo()`"

@@ -8,9 +8,9 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 
 /**
  * @dev Extension of {ERC1155} that allows token holders to destroy both their
- * own tokens and those that they have been approved to use.
+ * own tokens and those that they have been approved to use,
+ * Has Access control functionalities
  *
- * _Available since v3.1._
  */
 abstract contract ERC1155AccessControlledBurnable is
     Context,
@@ -33,6 +33,28 @@ abstract contract ERC1155AccessControlledBurnable is
     modifier onlyOwner() {
         require(
             hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
+            "Ownable: caller is not the admin"
+        );
+        _;
+    }
+
+    /**
+     * @dev Throws if called by any account other than the owner.
+     */
+    modifier onlyMinter() {
+        require(
+            hasRole(MINTER_ROLE, _msgSender()),
+            "Ownable: caller is not the admin"
+        );
+        _;
+    }
+
+    /**
+     * @dev Throws if called by any account other than the owner.
+     */
+    modifier onlyPauser() {
+        require(
+            hasRole(PAUSER_ROLE, _msgSender()),
             "Ownable: caller is not the admin"
         );
         _;
