@@ -12,25 +12,32 @@ task("accounts", "Prints the list of accounts", async (args, hre) => {
 });
 
 dotenv.config();
-const PKS=[process.env.MY_PK!]
+const PKS = [process.env.MY_PK!];
 const config: HardhatUserConfig = {
   solidity: "0.8.7",
   networks: {
-    testnet: {
+    bscTestnet: {
       url: "https://data-seed-prebsc-1-s1.binance.org:8545",
       chainId: 97,
-      gasPrice:15000000000,
-      accounts:PKS,
+      gasPrice: 15000000000,
+      accounts: PKS,
     },
-
-    mainnet: {
+    bscMainnet: {
       url: "https://bsc-dataseed.binance.org/",
       chainId: 56,
       accounts: PKS,
     },
+    polygonMumbai: {
+      url: "https://rpc-mumbai.maticvigil.com",
+      accounts: PKS,
+    },
+    polygonMainnet: {
+      url: "https://rpc-mainnet.matic.network",
+      accounts: PKS,
+    },
   },
   etherscan: {
-    apiKey:process.env.ETHERSCAN_API_KEY,
+    apiKey: process.env.ETHERSCAN_API_KEY,
   },
 };
 

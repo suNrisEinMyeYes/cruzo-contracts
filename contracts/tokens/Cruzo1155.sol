@@ -9,14 +9,15 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 
 import "hardhat/console.sol";
 
-/// @title The Cruzo721 NFT Contract implementing ERC721 standard
-/// @notice This contract can will be the token for Cruzo NFT's
-/// @dev Only the contract owner can mint the tokens
 contract Cruzo1155 is ERC1155Supply, Pausable, Ownable {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     address public marketAddress;
 
+    /**
+     * @dev See {ERC1155-_beforeTokenTransfer}.
+     * @param _marketAddress -> address of Cruzo marketplace which has all authorization on every token
+     */
     constructor(address _marketAddress)
         ERC1155("https://somthing.something/{id}.json")
     {
