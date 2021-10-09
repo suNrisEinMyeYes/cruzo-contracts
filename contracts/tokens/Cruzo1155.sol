@@ -99,7 +99,7 @@ contract Cruzo1155 is ERC1155Supply, Pausable, Ownable {
      * @dev Mint a new token  to `to` address
      *
      */
-    function mintNew(uint256 _amount, address _to)
+    function mintNewTo(uint256 _amount, address _to)
         public
         onlyOwner
         returns (uint256)
@@ -114,7 +114,7 @@ contract Cruzo1155 is ERC1155Supply, Pausable, Ownable {
      * @dev Mint a new token  to `msg.sender` address
      *
      */
-    function mintNewTo(uint256 _amount) public onlyOwner returns (uint256) {
+    function mintNew(uint256 _amount) public onlyOwner returns (uint256) {
         return _mintNewTokens(_amount, msg.sender);
     }
 
