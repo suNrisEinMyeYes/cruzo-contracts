@@ -1,11 +1,9 @@
 // SPDX-License-Identifier: MIT
-
 pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 
 /**
@@ -14,10 +12,9 @@ import "@openzeppelin/contracts/security/Pausable.sol";
  *
  * _Available since v3.1._
  */
-abstract contract ERC1155BurnableSupply is
+abstract contract ERC1155AccessControlledBurnable is
     Context,
     AccessControlEnumerable,
-    Ownable,
     ERC1155Supply,
     Pausable
 {
@@ -28,6 +25,17 @@ abstract contract ERC1155BurnableSupply is
         _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
         _setupRole(MINTER_ROLE, _msgSender());
         _setupRole(PAUSER_ROLE, _msgSender());
+    }
+
+    /**
+     * @dev Throws if called by any account other than the owner.
+     */
+    modifier onlyOwner() {
+        require(
+            hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
+            "Ownable: caller is not the admin"
+        );
+        _;
     }
 
     function burn(

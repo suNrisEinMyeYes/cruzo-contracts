@@ -2,15 +2,12 @@
 pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
+import "./ERC1155AccessControlledBurnable.sol";
 
 
-import "./ERC1155BurnableSupply.sol";
-
-import "hardhat/console.sol";
-
-contract Cruzo1155 is ERC1155BurnableSupply {
+contract Cruzo1155 is ERC1155AccessControlledBurnable {
     using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds;
+    Counters.Counter private _tokenIds; 
     address public marketAddress;
 
     /**
