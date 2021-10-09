@@ -2,14 +2,13 @@
 pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/utils/Counters.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/security/Pausable.sol";
+
 
 import "./ERC1155BurnableSupply.sol";
 
 import "hardhat/console.sol";
 
-contract Cruzo1155 is ERC1155BurnableSupply, Pausable {
+contract Cruzo1155 is ERC1155BurnableSupply {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     address public marketAddress;
@@ -21,9 +20,6 @@ contract Cruzo1155 is ERC1155BurnableSupply, Pausable {
         ERC1155("https://somthing.something/{id}.json")
     {
         marketAddress = _marketAddress;
-        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
-        _setupRole(MINTER_ROLE, _msgSender());
-        _setupRole(PAUSER_ROLE, _msgSender());
     }
 
     function setURI(string calldata _uri) public returns (bool) {

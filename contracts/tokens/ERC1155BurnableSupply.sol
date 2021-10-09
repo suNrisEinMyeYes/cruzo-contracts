@@ -5,6 +5,8 @@ pragma solidity ^0.8.7;
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 
 /**
  * @dev Extension of {ERC1155} that allows token holders to destroy both their
@@ -15,20 +17,17 @@ import "@openzeppelin/contracts/access/AccessControlEnumerable.sol";
 abstract contract ERC1155BurnableSupply is
     Context,
     AccessControlEnumerable,
-    ERC1155Supply
+    Ownable,
+    ERC1155Supply,
+    Pausable
 {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
 
-    /**
-     * @dev Throws if called by any account other than the owner.
-     */
-    modifier onlyOwner() {
-        require(
-            hasRole(DEFAULT_ADMIN_ROLE, _msgSender()),
-            "Ownable: caller is not the owner"
-        );
-        _;
+    constructor() {
+        _setupRole(DEFAULT_ADMIN_ROLE, _msgSender());
+        _setupRole(MINTER_ROLE, _msgSender());
+        _setupRole(PAUSER_ROLE, _msgSender());
     }
 
     function burn(
