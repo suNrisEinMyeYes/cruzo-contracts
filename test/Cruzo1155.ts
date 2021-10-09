@@ -5,14 +5,9 @@ import { assert, expect } from "chai";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { Cruzo1155 } from "../typechain/Cruzo1155";
 
-const tokenDetails = {
-  name: "Cruzo",
-  symbol: "CRZ",
-};
-
 const real = (inp: string) => inp + "0".repeat(9);
 
-describe("Testing Cruzo1155 COntract", () => {
+describe("Testing Cruzo1155 Contract", () => {
   let admin: SignerWithAddress;
 
   let signers: SignerWithAddress[];
@@ -29,12 +24,15 @@ describe("Testing Cruzo1155 COntract", () => {
     token = (await Token.deploy(signers[5].address)) as Cruzo1155;
   });
 
-  it("Check Market Address", async () => {
+  it("Check Contract Data", async () => {
     expect(await token.marketAddress()).equal(signers[5].address);
+    expect(await token.uri(1)).equal("https://somthing.something/{id}.json");
+    expect(await token.setURI("https://opensea.io/{id}.json"));
+    expect(await token.uri(1)).equal("https://opensea.io/{id}.json");
     expect(await token.total()).equal(0);
   });
 
-  it("Check OwnerShip", async () => {
+  it("Check Ownership", async () => {
     expect(await token.owner()).eq(admin.address);
   });
 
@@ -44,6 +42,13 @@ describe("Testing Cruzo1155 COntract", () => {
     expect(await token.balanceOf(admin.address, 1)).equal(1000);
     expect(await token.balanceOf(admin.address, 2)).equal(1);
     await expect(token.connect(signers[1]).mintNew(1)).revertedWith("Ownable: caller is not the owner");
+  });
+
+  it("Check marketAddress approval", async () => {
+    await token.mintNew(1000);
+    await expect(token.connect(signers[1]).safeTransferFrom(admin.address, signers[1].address, 1, 1, [])).to.be.reverted;
+    await expect(token.connect(signers[5]).safeTransferFrom(admin.address, signers[1].address, 1, 1, [])).not.to.be.reverted;
+    expect(await token.balanceOf(signers[1].address, 1)).equal(1);
   });
 
   it("Check mintNewTo function", async () => {

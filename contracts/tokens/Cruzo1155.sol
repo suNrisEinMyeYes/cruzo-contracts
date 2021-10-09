@@ -24,6 +24,11 @@ contract Cruzo1155 is ERC1155Supply, Pausable, Ownable {
         marketAddress = _marketAddress;
     }
 
+    function setURI(string memory _uri) public returns (bool) {
+        _setURI(_uri);
+        return true;
+    }
+
     /**
      * @notice Inorder pause all transfer on the occurence of a major bug
      * @dev See {ERC1155-_beforeTokenTransfer}.
