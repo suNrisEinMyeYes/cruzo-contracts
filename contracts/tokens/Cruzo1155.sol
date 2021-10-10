@@ -3,7 +3,7 @@ pragma solidity ^0.8.7;
 
 import "./ERC1155CruzoBase.sol";
 
-contract Cruzo1155 is ERC1155CruzoBase{
+contract Cruzo1155 is ERC1155CruzoBase {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     address public marketAddress;
@@ -18,13 +18,13 @@ contract Cruzo1155 is ERC1155CruzoBase{
         string memory _name,
         string memory _symbol,
         address _marketAddress
-    ) ERC1155("https://somthing.something/{id}.json") {
+    ) ERC1155("https://cruzo.io/tokens/{id}.json") {
         marketAddress = _marketAddress;
         name = _name;
         symbol = _symbol;
     }
 
-    function setURI(string calldata _uri) public returns (bool) {
+    function setURI(string calldata _uri) public onlyOwner returns (bool) {
         _setURI(_uri);
         return true;
     }

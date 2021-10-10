@@ -26,7 +26,7 @@ describe("Testing Cruzo1155 Contract", () => {
 
   it("Check Contract Data", async () => {
     expect(await token.marketAddress()).equal(signers[5].address);
-    expect(await token.uri(1)).equal("https://somthing.something/{id}.json");
+    expect(await token.uri(1)).equal("https://cruzo.io/tokens/{id}.json");
     expect(await token.setURI("https://opensea.io/{id}.json"));
     expect(await token.uri(1)).equal("https://opensea.io/{id}.json");
     expect(await token.total()).equal(0);
