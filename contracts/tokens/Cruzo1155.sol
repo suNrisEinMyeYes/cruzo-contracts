@@ -1,10 +1,9 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
-import "@openzeppelin/contracts/utils/Counters.sol";
-import "./ERC1155AccessControlledBurnable.sol";
+import "./ERC1155CruzoBase.sol";
 
-contract Cruzo1155 is ERC1155AccessControlledBurnable {
+contract Cruzo1155 is ERC1155CruzoBase{
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     address public marketAddress;
@@ -30,8 +29,6 @@ contract Cruzo1155 is ERC1155AccessControlledBurnable {
         return true;
     }
 
-
-
     /**
      *
      * @notice This function return totalNumber of unique tokentypes
@@ -52,7 +49,7 @@ contract Cruzo1155 is ERC1155AccessControlledBurnable {
      * @dev Can be used to mint any specific tokens
      *
      */
-    function _mintTokens(
+    function _mintToken(
         uint256 _tokenId,
         uint256 _amount,
         address _to,
@@ -70,14 +67,15 @@ contract Cruzo1155 is ERC1155AccessControlledBurnable {
      * @param _amount - The amount of tokens to be minted
      * @dev Used internally to mint new tokens
      */
-    function _mintNewTokens(
+    function _createToken(
         uint256 _amount,
         address _to,
         bytes memory _data
     ) internal returns (uint256) {
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
-        return _mintTokens(newItemId, _amount, _to, _data);
+        creators[newItemId] = _msgSender();
+        return _mintToken(newItemId, _amount, _to, _data);
     }
 
     /**
@@ -92,8 +90,8 @@ contract Cruzo1155 is ERC1155AccessControlledBurnable {
         uint256 _amount,
         address _to,
         bytes memory _data
-    ) public onlyMinter returns (uint256) {
-        return _mintNewTokens(_amount, _to, _data);
+    ) public returns (uint256) {
+        return _createToken(_amount, _to, _data);
     }
 
     /**
@@ -110,11 +108,11 @@ contract Cruzo1155 is ERC1155AccessControlledBurnable {
         uint256 _amount,
         address _to,
         bytes memory _data
-    ) public onlyMinter returns (uint256) {
+    ) public onlyCreator(_tokenId) returns (uint256) {
         require(
             _tokenIds.current() >= _tokenId,
             "token doesn't exist; try using `mintNewTo()`"
         );
-        return _mintTokens(_tokenId, _amount, _to, _data);
+        return _mintToken(_tokenId, _amount, _to, _data);
     }
 }

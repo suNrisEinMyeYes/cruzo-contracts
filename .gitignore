@@ -24,4 +24,7 @@ yarn.lock
 typechain
 
 # Notes
-notes.md
+*.notes.md
+
+#
+yarn-error.log

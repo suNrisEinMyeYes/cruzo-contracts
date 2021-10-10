@@ -32,12 +32,24 @@ describe("Testing Cruzo1155 Contract", () => {
     expect(await token.total()).equal(0);
   });
 
-  it("Check mintNew function", async () => {
+  it("Should update balance and totalSupply on create", async () => {
     await token.create(1000, admin.address, []);
     await token.create(1, admin.address, []);
     expect(await token.balanceOf(admin.address, 1)).equal(1000);
+    expect(await token.totalSupply(1)).equal(1000);
     expect(await token.balanceOf(admin.address, 2)).equal(1);
-    await expect(token.connect(signers[1]).create(1, signers[1].address, [])).revertedWith("Ownable: caller is not the admin");
+    expect(await token.totalSupply(2)).equal(1);
+  });
+
+  it("Should update creator on create()", async () => {
+    await token.create(1000, admin.address, []);
+    expect(await token.creators(1)).equal(admin.address);
+    await token.create(1000, signers[1].address, []);
+    expect(await token.creators(2)).equal(admin.address);
+    await token.connect(signers[1]).create(1, admin.address, []);
+    expect(await token.creators(3)).equal(signers[1].address);
+    await token.connect(signers[1]).create(1, signers[1].address, []);
+    expect(await token.creators(4)).equal(signers[1].address);
   });
 
   it("Check marketAddress approval", async () => {
@@ -47,12 +59,18 @@ describe("Testing Cruzo1155 Contract", () => {
     expect(await token.balanceOf(signers[1].address, 1)).equal(1);
   });
 
-  it("Check create function", async () => {
-    await token.create(1000, signers[1].address, []);
-    await token.create(1, signers[1].address, []);
-    expect(await token.balanceOf(signers[1].address, 1)).equal(1000);
-    expect(await token.balanceOf(signers[1].address, 2)).equal(1);
-    await expect(token.connect(signers[1]).create(1, signers[1].address, [])).revertedWith("Ownable: caller is not the admin");
+  it("Should puase and unpause", async () => {
+    await token.create(1000, admin.address, []);
+    await expect(token.safeTransferFrom(admin.address, signers[1].address, 1, 1, [])).not.to.be.reverted;
+    await token.pause();
+    expect(await token.paused()).equal(true);
+    await expect(token.safeTransferFrom(admin.address, signers[1].address, 1, 1, [])).to.be.revertedWith(
+      "ERC1155CruzoBase: token transfer while paused"
+    );
+    await token.unpause();
+    expect(await token.paused()).equal(false);
+    await expect(token.safeTransferFrom(admin.address, signers[1].address, 1, 1, [])).not.to.be.reverted;
+    expect(await token.balanceOf(signers[1].address, 1)).equal(2);
   });
 
   it("Check mintTo function", async () => {
@@ -62,7 +80,9 @@ describe("Testing Cruzo1155 Contract", () => {
     await token.mintTo(2, 1, signers[1].address, []);
     expect(await token.balanceOf(signers[1].address, 1)).equal(2);
     expect(await token.balanceOf(signers[1].address, 2)).equal(2);
-    await expect(token.connect(signers[1]).mintTo(1, 1, signers[1].address, [])).revertedWith("Ownable: caller is not the admin");
+    await expect(token.connect(signers[1]).mintTo(1, 1, signers[1].address, [])).revertedWith(
+      "ERC1155CruzoBase#onlyCreator: ONLY_CREATOR_ALLOWED"
+    );
   });
 
   it("Should update balance and totalSupply on burn", async () => {
@@ -76,7 +96,7 @@ describe("Testing Cruzo1155 Contract", () => {
 
   it("Should not burn if msg.sender is not approved", async () => {
     await token.create(1000, signers[1].address, []);
-    await expect(token.burn(signers[1].address, 1, 1)).to.revertedWith("ERC1155: caller is not owner nor approved");
+    await expect(token.burn(signers[1].address, 1, 1)).to.revertedWith("ERC1155CruzoBase: caller is not owner nor approved");
   });
 
   it("Should update balance and totalSupply on burnBatch", async () => {
