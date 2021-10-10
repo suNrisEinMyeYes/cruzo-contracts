@@ -9,13 +9,20 @@ contract Cruzo1155 is ERC1155AccessControlledBurnable {
     Counters.Counter private _tokenIds;
     address public marketAddress;
 
+    string public name;
+    string public symbol;
+
     /**
      *  @param _marketAddress -> address of Cruzo marketplace which has all authorization on every token
      */
-    constructor(address _marketAddress)
-        ERC1155("https://somthing.something/{id}.json")
-    {
+    constructor(
+        string memory _name,
+        string memory _symbol,
+        address _marketAddress
+    ) ERC1155("https://somthing.something/{id}.json") {
         marketAddress = _marketAddress;
+        name = _name;
+        symbol = _symbol;
     }
 
     function setURI(string calldata _uri) public returns (bool) {
@@ -23,26 +30,7 @@ contract Cruzo1155 is ERC1155AccessControlledBurnable {
         return true;
     }
 
-    /**
-     * @notice Inorder pause all transfer on the occurence of a major bug
-     * @dev See {ERC1155-_beforeTokenTransfer}.
-     *
-     * Requirements:
-     *
-     * - the contract must not be paused.
-     */
-    function _beforeTokenTransfer(
-        address operator,
-        address from,
-        address to,
-        uint256[] memory ids,
-        uint256[] memory amounts,
-        bytes memory data
-    ) internal virtual override {
-        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
 
-        require(!paused(), "ERC1155Pausable: token transfer while paused");
-    }
 
     /**
      *

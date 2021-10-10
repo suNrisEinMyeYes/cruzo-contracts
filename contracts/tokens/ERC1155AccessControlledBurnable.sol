@@ -60,6 +60,27 @@ abstract contract ERC1155AccessControlledBurnable is
         _;
     }
 
+    /**
+     * @notice Inorder pause all transfer on the occurence of a major bug
+     * @dev See {ERC1155-_beforeTokenTransfer}.
+     *
+     * Requirements:
+     *
+     * - the contract must not be paused.
+     */
+    function _beforeTokenTransfer(
+        address operator,
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) internal virtual override {
+        super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
+
+        require(!paused(), "ERC1155Pausable: token transfer while paused");
+    }
+
     function burn(
         address account,
         uint256 id,

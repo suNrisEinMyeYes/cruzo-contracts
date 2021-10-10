@@ -21,7 +21,7 @@ describe("Testing Cruzo1155 Contract", () => {
 
   beforeEach(async () => {
     let Token = await ethers.getContractFactory("Cruzo1155");
-    token = (await Token.deploy(signers[5].address)) as Cruzo1155;
+    token = (await Token.deploy("Cruzo", "CRZ", signers[5].address)) as Cruzo1155;
   });
 
   it("Check Contract Data", async () => {
