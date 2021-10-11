@@ -11,17 +11,11 @@ contract Cruzo1155 is ERC1155CruzoBase {
     string public name;
     string public symbol;
 
-    /**
-     *  @param _marketAddress -> address of Cruzo marketplace which has all authorization on every token
-     */
-    constructor(
-        string memory _name,
-        string memory _symbol,
-        address _marketAddress
-    ) ERC1155("https://cruzo.io/tokens/{id}.json") {
-        marketAddress = _marketAddress;
-        name = _name;
-        symbol = _symbol;
+ 
+    constructor() ERC1155("https://cruzo.io/tokens/{id}.json") {
+        marketAddress = 0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc;
+        name = "Cruzo";
+        symbol = "CRZ";
     }
 
     function setURI(string calldata _uri) public onlyOwner returns (bool) {
