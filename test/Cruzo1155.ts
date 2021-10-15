@@ -5,6 +5,14 @@ import { assert, expect } from "chai";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { Cruzo1155 } from "../typechain/Cruzo1155";
 
+const tokenDetails = {
+  name: "Cruzo",
+  symbol: "CRZ",
+  baseOnlyURI: "https://cruzo.io/tokens/{id}.json",
+  baseAndIdURI: "https://cruzo.io/tokens",
+  altBaseOnlyURI: "https://opensea.io/tokens/{id}.json",
+  altBaseAndIdURI: "https:opensea.io/tokens/",
+};
 const real = (inp: string) => inp + "0".repeat(9);
 
 describe("Testing Cruzo1155 Contract", () => {
@@ -21,15 +29,29 @@ describe("Testing Cruzo1155 Contract", () => {
 
   beforeEach(async () => {
     let Token = await ethers.getContractFactory("Cruzo1155");
-    token = (await Token.deploy()) as Cruzo1155;
+    token = (await Token.deploy(tokenDetails.baseOnlyURI)) as Cruzo1155;
   });
 
   it("Check Contract Data", async () => {
     expect(await token.marketAddress()).equal(signers[5].address);
-    expect(await token.uri(1)).equal("https://cruzo.io/tokens/{id}.json");
-    expect(await token.setURI("https://opensea.io/{id}.json"));
-    expect(await token.uri(1)).equal("https://opensea.io/{id}.json");
-    expect(await token.total()).equal(0);
+    expect(await token.baseURI()).equal(tokenDetails.baseOnlyURI);
+    await token.create(1, admin.address, []);
+    expect(await token.uri(1)).equal(tokenDetails.baseOnlyURI);
+    expect(await token.total()).equal(1);
+  });
+
+  it("Should update baseURI", async () => {
+    expect(await token.baseURI()).equal(tokenDetails.baseOnlyURI);
+    await token.setBaseURI(tokenDetails.altBaseOnlyURI);
+    expect(await token.baseURI()).eq(tokenDetails.altBaseOnlyURI);
+    await token.create(1, admin.address, []);
+    expect(await token.uri(1)).eq(tokenDetails.altBaseOnlyURI);
+  });
+
+  it("Should change URI Type", async () => {
+    expect(await token.uriType()).eq(0);
+    await token.setURIType(1);
+    expect(await token.uriType()).eq(1);
   });
 
   it("Should update balance and totalSupply on create", async () => {

@@ -1,9 +1,9 @@
 //SPDX-License-Identifier: MIT
-pragma solidity ^0.8.7;
+pragma solidity ^0.8.6;
 
-import "./ERC1155CruzoBase.sol";
+import "./ERC1155URI.sol";
 
-contract Cruzo1155 is ERC1155CruzoBase {
+contract Cruzo1155 is ERC1155URI {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
     address public marketAddress;
@@ -11,16 +11,11 @@ contract Cruzo1155 is ERC1155CruzoBase {
     string public name;
     string public symbol;
 
- 
-    constructor() ERC1155("https://cruzo.io/tokens/{id}.json") {
+    constructor(string memory _baseMetadataURI) ERC1155(_baseMetadataURI) {
         marketAddress = 0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc;
         name = "Cruzo";
         symbol = "CRZ";
-    }
-
-    function setURI(string calldata _uri) public onlyOwner returns (bool) {
-        _setURI(_uri);
-        return true;
+        _setBaseURI(_baseMetadataURI);
     }
 
     /**
@@ -108,5 +103,24 @@ contract Cruzo1155 is ERC1155CruzoBase {
             "token doesn't exist; try using `mintNewTo()`"
         );
         return _mintToken(_tokenId, _amount, _to, _data);
+    }
+
+    /**
+     *
+     * @notice SET Uri Type from {DEFAULT,IPFS,ID}
+     * @param _uriType - The uri type selected from {DEFAULT,IPFS,ID}
+     */
+
+    function setURIType(uint256 _uriType) public onlyOwner {
+        _setURIType(_uriType);
+    }
+
+    function uri(uint256 id) public view override returns (string memory) {
+        require(id <= _tokenIds.current(), "Cruzo1155:non existent tokenId");
+        return _tokenURI(id);
+    }
+
+    function setBaseURI(string memory _baseURI) public onlyOwner {
+        _setBaseURI(_baseURI);
     }
 }
