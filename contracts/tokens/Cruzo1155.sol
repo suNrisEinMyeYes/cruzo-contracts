@@ -11,8 +11,10 @@ contract Cruzo1155 is ERC1155URI {
     string public name;
     string public symbol;
 
-    constructor(string memory _baseMetadataURI) ERC1155(_baseMetadataURI) {
-        marketAddress = 0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc;
+    constructor(string memory _baseMetadataURI, address _marketAddress)
+        ERC1155(_baseMetadataURI)
+    {
+        marketAddress = _marketAddress;
         name = "Cruzo";
         symbol = "CRZ";
         _setBaseURI(_baseMetadataURI);
