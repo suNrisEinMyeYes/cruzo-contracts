@@ -120,6 +120,11 @@ contract Cruzo1155 is ERC1155URI {
         return _tokenURI(id);
     }
 
+    function setTokenURI(uint256 _id, string memory _uri) public onlyOwner {
+        require(_id <= _tokenIds.current(), "Cruzo1155:non existent tokenId");
+        _setTokenURI(_id, _uri);
+    }
+
     function setBaseURI(string memory _baseURI) public onlyOwner {
         _setBaseURI(_baseURI);
     }

@@ -61,16 +61,12 @@ abstract contract ERC1155URI is ERC1155CruzoBase {
         return false;
     }
 
- 
-
     function _tokenURI(uint256 _tokenId)
         internal
         view
         virtual
         returns (string memory)
     {
-
-
         string memory _tUri = _tokenURIs[_tokenId];
         string memory base = baseURI();
 
@@ -80,7 +76,7 @@ abstract contract ERC1155URI is ERC1155CruzoBase {
             }
 
             if (_uriType == URIType.ID) {
-                string(abi.encodePacked(base, _tokenId.toString()));
+                return string(abi.encodePacked(base, "/", _tokenId.toString()));
             }
         }
 

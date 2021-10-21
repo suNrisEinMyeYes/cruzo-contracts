@@ -54,6 +54,28 @@ describe("Testing Cruzo1155 Contract", () => {
     expect(await token.uriType()).eq(1);
   });
 
+  it("Should return baseURI when URIType is Default", async () => {
+    expect(await token.uri(0)).eq(tokenDetails.baseOnlyURI);
+    expect(await token.setURIType(1));
+    expect(await token.uri(0)).eq(tokenDetails.baseOnlyURI);
+  });
+
+  it("Should return baseURI when URIType is IPFS and no tokenURI is set", async () => {
+    expect(await token.setURIType(1));
+    expect(await token.uri(0)).eq(tokenDetails.baseOnlyURI);
+  });
+
+  it("Should return ipfs://tokenURI when URIType is IPFS and tokenURI is set", async () => {
+    expect(await token.setURIType(1));
+    expect(await token.setTokenURI(0, "Qmjksfoasjdofaweofjkasdfjaswofdso"));
+    expect(await token.uri(0)).eq("ipfs://" + "Qmjksfoasjdofaweofjkasdfjaswofdso");
+  });
+
+  it("Should return concatenaed basUri+id when URIType is ID and baseURI is set", async () => {
+    expect(await token.setURIType(2));
+    expect(await token.uri(0)).eq(tokenDetails.baseOnlyURI + "/" + "0");
+  });
+
   it("Should update balance and totalSupply on create", async () => {
     await token.create(1000, admin.address, []);
     await token.create(1, admin.address, []);
