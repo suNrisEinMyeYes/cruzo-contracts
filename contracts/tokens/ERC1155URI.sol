@@ -13,7 +13,7 @@ abstract contract ERC1155URI is ERC1155CruzoBase {
         ID
     }
 
-    URIType private _uriType = URIType.DEFAULT;
+    URIType private _uriType = URIType.IPFS;
 
     // Optional mapping for token URIs
     mapping(uint256 => string) private _tokenURIs;

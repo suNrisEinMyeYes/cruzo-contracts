@@ -61,11 +61,17 @@ contract Cruzo1155 is ERC1155URI {
     function _createToken(
         uint256 _amount,
         address _to,
+        string memory _uri,
         bytes memory _data
     ) internal returns (uint256) {
         _tokenIds.increment();
         uint256 newItemId = _tokenIds.current();
         creators[newItemId] = _msgSender();
+
+        if (bytes(_uri).length > 0) {
+            _setTokenURI(newItemId, _uri);
+        }
+
         return _mintToken(newItemId, _amount, _to, _data);
     }
 
@@ -80,9 +86,10 @@ contract Cruzo1155 is ERC1155URI {
     function create(
         uint256 _amount,
         address _to,
+        string memory _uri,
         bytes memory _data
     ) public returns (uint256) {
-        return _createToken(_amount, _to, _data);
+        return _createToken(_amount, _to, _uri, _data);
     }
 
     /**
