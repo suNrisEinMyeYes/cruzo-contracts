@@ -56,6 +56,7 @@ contract Cruzo1155 is ERC1155URI {
      * @notice Internal function to mint to `_amount` of tokens of new tokens to `_to` address
      * @param _to - The to address to which the token is to be minted
      * @param _amount - The amount of tokens to be minted
+     * @param _uri - The token metadata uri (optional if tokenURI is set)
      * @dev Used internally to mint new tokens
      */
     function _createToken(
@@ -129,7 +130,7 @@ contract Cruzo1155 is ERC1155URI {
         return _tokenURI(id);
     }
 
-    function setTokenURI(uint256 _id, string memory _uri) public onlyOwner {
+    function setTokenURI(uint256 _id, string memory _uri) public {
         require(_id <= _tokenIds.current(), "Cruzo1155:non existent tokenId");
         _setTokenURI(_id, _uri);
     }

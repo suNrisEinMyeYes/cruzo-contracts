@@ -10,7 +10,8 @@ abstract contract ERC1155URI is ERC1155CruzoBase {
     enum URIType {
         DEFAULT,
         IPFS,
-        ID
+        ID,
+        URI
     }
 
     URIType private _uriType = URIType.IPFS;
@@ -58,6 +59,11 @@ abstract contract ERC1155URI is ERC1155CruzoBase {
             return true;
         }
 
+        if (_type == 3) {
+            _uriType = URIType.URI;
+            return true;
+        }
+
         return false;
     }
 
@@ -70,21 +76,22 @@ abstract contract ERC1155URI is ERC1155CruzoBase {
         string memory _tUri = _tokenURIs[_tokenId];
         string memory base = baseURI();
 
-        if (bytes(base).length > 0) {
-            if (_uriType == URIType.DEFAULT) {
-                return base;
-            }
-
-            if (_uriType == URIType.ID) {
-                return string(abi.encodePacked(base, "/", _tokenId.toString()));
-            }
+        if (_uriType == URIType.DEFAULT) {
+            return base;
         }
 
-        if (bytes(_tUri).length > 0) {
-            if (_uriType == URIType.IPFS) {
-                return string(abi.encodePacked("ipfs://", _tUri));
-            }
+        if (_uriType == URIType.ID) {
+            return
+                string(
+                    abi.encodePacked(base, "/", _tokenId.toString(), ".json")
+                );
+        }
 
+        if (_uriType == URIType.IPFS) {
+            return string(abi.encodePacked("ipfs://", _tUri));
+        }
+
+        if (_uriType == URIType.URI) {
             return _tUri;
         }
 
@@ -98,12 +105,13 @@ abstract contract ERC1155URI is ERC1155CruzoBase {
      *
      * - `tokenId` must exist.
      */
-    function _setTokenURI(uint256 tokenId, string memory _uri)
+    function _setTokenURI(uint256 _id, string memory _uri)
         internal
         virtual
+        onlyCreator(_id)
     {
-        _tokenURIs[tokenId] = _uri;
-        emit URI(_tokenURI(tokenId), tokenId);
+        _tokenURIs[_id] = _uri;
+        emit URI(_tokenURI(_id), _id);
     }
 
     /**

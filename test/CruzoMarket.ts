@@ -39,7 +39,7 @@ describe("Testing CruzoMarket Contract", () => {
   });
 
   it("Should Open Trade", async () => {
-    await token.create(1, admin.address, []);
+    await token.create(1, admin.address,"", []);
     expect(await market.openTrade(token.address, 1, 1, "10000000000", []));
     expect(await token.balanceOf(admin.address, 1)).eq(0);
     expect(await token.balanceOf(market.address, 1)).eq(1);
@@ -47,7 +47,7 @@ describe("Testing CruzoMarket Contract", () => {
   });
 
   it("Should execute trade", async () => {
-    await token.create(1, admin.address, []);
+    await token.create(1, admin.address,"", []);
     expect(await market.openTrade(token.address, 1, 1, ethers.utils.parseEther("1.0"), []));
     expect(await market.connect(signers[1]).executeTrade(0, [], { value: ethers.utils.parseEther("1.0") }));
     expect(await token.balanceOf(market.address, 1)).eq(0);
@@ -55,13 +55,13 @@ describe("Testing CruzoMarket Contract", () => {
   });
 
   it("Should cancel trade", async () => {
-    await token.create(1, admin.address, []);
+    await token.create(1, admin.address,"", []);
     expect(await market.openTrade(token.address, 1, 1, ethers.utils.parseEther("1.0"), []));
     expect(market.cancelTrade(0, []));
   });
 
   it("Should get all on trade", async () => {
-    await token.create(1, admin.address, []);
+    await token.create(1, admin.address,"", []);
     expect(await market.openTrade(token.address, 1, 1, ethers.utils.parseEther("1.0"), []));
     const allTrades = await market.getAllOnSale();
     expect(allTrades.length).eq(1);
