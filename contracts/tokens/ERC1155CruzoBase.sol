@@ -7,6 +7,7 @@ import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Supply.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
+
 abstract contract ERC1155CruzoBase is
     Context,
     ERC1155Supply,
@@ -14,6 +15,7 @@ abstract contract ERC1155CruzoBase is
     Pausable
 {
     mapping(uint256 => address) public creators;
+
 
     /**
      * @dev Require msg.sender to be the creator of the token id
@@ -86,4 +88,6 @@ abstract contract ERC1155CruzoBase is
 
         _burnBatch(account, ids, values);
     }
+
+    
 }
