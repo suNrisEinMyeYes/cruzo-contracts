@@ -2,8 +2,10 @@ import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "@nomiclabs/hardhat-etherscan";
+import "hardhat-abi-exporter";
 import { task, HardhatUserConfig } from "hardhat/config";
 import * as dotenv from "dotenv";
+
 task("accounts", "Prints the list of accounts", async (args, hre) => {
   const accounts = await hre.ethers.getSigners();
   for (const account of accounts) {
@@ -61,6 +63,14 @@ const config: HardhatUserConfig = {
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
   },
+  abiExporter: {
+    path: './data/abi',
+    runOnCompile: true,
+    clear: true,
+    flat: true,
+    spacing: 2,
+    pretty: false,
+  }
 };
 
 export default config;
