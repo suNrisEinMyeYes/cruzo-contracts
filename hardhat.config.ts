@@ -12,7 +12,7 @@ task("accounts", "Prints the list of accounts", async (args, hre) => {
 });
 
 dotenv.config();
-const PKS = [process.env.MY_PK!];
+const PKS = [process.env.PRIVATE_KEY!];
 const config: HardhatUserConfig = {
   solidity: "0.8.7",
   networks: {
@@ -35,6 +35,16 @@ const config: HardhatUserConfig = {
       url: "https://rpc-mainnet.matic.network",
       accounts: PKS,
     },
+    cronosMainnetBeta: {
+      url: "https://evm-cronos.crypto.org",
+      chainId: 25,
+      accounts: PKS,
+    },
+    cronosTestnet: {
+      url: "https://cronos-testnet-3.crypto.org:8545",
+      chainId: 338,
+      accounts: PKS,
+    }
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
