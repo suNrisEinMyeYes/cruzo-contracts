@@ -2,8 +2,10 @@ import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "@nomiclabs/hardhat-etherscan";
+import "hardhat-abi-exporter";
 import { task, HardhatUserConfig } from "hardhat/config";
 import * as dotenv from "dotenv";
+
 task("accounts", "Prints the list of accounts", async (args, hre) => {
   const accounts = await hre.ethers.getSigners();
   for (const account of accounts) {
@@ -44,11 +46,31 @@ const config: HardhatUserConfig = {
       url: "https://cronos-testnet-3.crypto.org:8545",
       chainId: 338,
       accounts: PKS,
-    }
+    },
+    avaxMainnet: {
+      url: 'https://api.avax.network/ext/bc/C/rpc',
+      gasPrice: 225000000000,
+      chainId: 43114,
+      accounts: PKS
+    },
+    avaxFuji: {
+      url: 'https://api.avax-test.network/ext/bc/C/rpc',
+      gasPrice: 225000000000,
+      chainId: 43113,
+      accounts: PKS
+    },
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
   },
+  abiExporter: {
+    path: './data/abi',
+    runOnCompile: true,
+    clear: true,
+    flat: true,
+    spacing: 2,
+    pretty: false,
+  }
 };
 
 export default config;
