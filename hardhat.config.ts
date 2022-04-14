@@ -2,6 +2,7 @@ import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "@nomiclabs/hardhat-etherscan";
+import "@openzeppelin/hardhat-upgrades";
 import "hardhat-abi-exporter";
 import { task, HardhatUserConfig } from "hardhat/config";
 import * as dotenv from "dotenv";
@@ -30,7 +31,7 @@ const config: HardhatUserConfig = {
       accounts: PKS,
     },
     polygonMumbai: {
-      url: "https://rpc-mumbai.maticvigil.com",
+      url: "https://matic-mumbai.chainstacklabs.com",
       accounts: PKS,
     },
     polygonMainnet: {

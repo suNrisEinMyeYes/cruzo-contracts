@@ -2,18 +2,19 @@
 pragma solidity ^0.8.6;
 
 import "./ERC1155URI.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 
-contract Cruzo1155 is ERC1155URI {
-    using Counters for Counters.Counter;
-    Counters.Counter private _tokenIds;
+contract Cruzo1155 is Initializable, ERC1155URI {
+    using CountersUpgradeable for CountersUpgradeable.Counter;
+    CountersUpgradeable.Counter private _tokenIds;
     address public marketAddress;
 
     string public name;
     string public symbol;
 
-    constructor(string memory _baseMetadataURI, address _marketAddress)
-        ERC1155(_baseMetadataURI)
-    {
+    function initialize(string memory _baseMetadataURI, address _marketAddress) public initializer {
+        ERC1155Upgradeable.__ERC1155_init_unchained(_baseMetadataURI);
+        ERC1155URI.initialize();
         marketAddress = _marketAddress;
         name = "Cruzo";
         symbol = "CRZ";

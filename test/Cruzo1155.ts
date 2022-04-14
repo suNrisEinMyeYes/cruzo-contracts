@@ -1,6 +1,6 @@
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
-import { ethers } from "hardhat";
+import { ethers, upgrades } from "hardhat";
 import { assert, expect } from "chai";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { Cruzo1155 } from "../typechain/Cruzo1155";
@@ -30,7 +30,8 @@ describe("Testing Cruzo1155 Contract", () => {
 
   beforeEach(async () => {
     let Token = await ethers.getContractFactory("Cruzo1155");
-    token = (await Token.deploy(tokenDetails.baseOnlyURI, "0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc")) as Cruzo1155;
+    token = (await upgrades.deployProxy(Token, [tokenDetails.baseOnlyURI, "0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc"], { initializer: 'initialize(string,address)' })) as Cruzo1155;
+    await token.deployed();
   });
 
   it("Check Contract Data", async () => {

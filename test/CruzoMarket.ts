@@ -1,6 +1,6 @@
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
-import { ethers } from "hardhat";
+import {ethers, upgrades} from "hardhat";
 import { assert, expect } from "chai";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { Cruzo1155 } from "../typechain/Cruzo1155";
@@ -34,8 +34,10 @@ describe("Testing CruzoMarket Contract", () => {
   beforeEach(async () => {
     let Market = await ethers.getContractFactory("CruzoMarket");
     let Token = await ethers.getContractFactory("Cruzo1155");
-    market = (await Market.deploy()) as CruzoMarket;
-    token = (await Token.deploy(tokenDetails.baseOnlyURI, market.address)) as Cruzo1155;
+    market = await upgrades.deployProxy(Market, [], { initializer: 'initialize()' }) as CruzoMarket;
+    await market.deployed();
+    token = (await upgrades.deployProxy(Token, [tokenDetails.baseOnlyURI, market.address], { initializer: 'initialize(string,address)' })) as Cruzo1155;
+    await token.deployed();
   });
 
   it("Should Open Trade", async () => {

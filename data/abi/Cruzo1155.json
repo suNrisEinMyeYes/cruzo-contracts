@@ -1,21 +1,5 @@
 [
   {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_baseMetadataURI",
-        "type": "string"
-      },
-      {
-        "internalType": "address",
-        "name": "_marketAddress",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
     "anonymous": false,
     "inputs": [
       {
@@ -360,6 +344,31 @@
   {
     "inputs": [
       {
+        "internalType": "string",
+        "name": "_baseMetadataURI",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "_marketAddress",
+        "type": "address"
+      }
+    ],
+    "name": "initialize",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "initialize",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "account",
         "type": "address"
@@ -637,6 +646,19 @@
   {
     "inputs": [],
     "name": "symbol",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "testCopybaseURI",
     "outputs": [
       {
         "internalType": "string",

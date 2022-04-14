@@ -1,11 +1,12 @@
 //SPDX-License-Identifier: un-licensed
 pragma solidity ^0.8.7;
 
-import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
-import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155HolderUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-contract CruzoMarket is ERC1155Holder, Ownable {
+contract CruzoMarket is Initializable, ERC1155HolderUpgradeable, OwnableUpgradeable {
     event TradeStatusChange(uint256 indexed itemId, bytes32 status);
     event PriceChange(uint256 oldPrice, uint256 newPrice);
 
@@ -21,6 +22,11 @@ contract CruzoMarket is ERC1155Holder, Ownable {
     mapping(uint256 => Trade) private trades;
 
     uint256 private tradeCounter;
+
+    // Initialize
+    function initialize() public initializer {
+        __Ownable_init_unchained();
+    }
 
     // Get individual trade
     function getTrade(uint256 _trade) public view returns (Trade memory) {
@@ -43,7 +49,7 @@ contract CruzoMarket is ERC1155Holder, Ownable {
         uint256 _price,
         bytes calldata data
     ) public {
-        IERC1155 itemToken = IERC1155(_tokenAddress);
+        IERC1155Upgradeable itemToken = IERC1155Upgradeable(_tokenAddress);
         require(
             itemToken.balanceOf(msg.sender, _itemId) != 0,
             "Error: Only owner can list"
@@ -77,7 +83,7 @@ contract CruzoMarket is ERC1155Holder, Ownable {
 
     function executeTrade(uint256 _trade, bytes calldata data) public payable {
         Trade memory trade = trades[_trade];
-        IERC1155 itemToken = IERC1155(trade.tokenAddress);
+        IERC1155Upgradeable itemToken = IERC1155Upgradeable(trade.tokenAddress);
         require(trade.status == "Open", "Error: Trade is not Open");
         require(
             msg.sender != address(0) && msg.sender != trade.poster,
@@ -110,7 +116,7 @@ contract CruzoMarket is ERC1155Holder, Ownable {
 
     function cancelTrade(uint256 _trade, bytes calldata data) public {
         Trade memory trade = trades[_trade];
-        IERC1155 itemToken = IERC1155(trade.tokenAddress);
+        IERC1155Upgradeable itemToken = IERC1155Upgradeable(trade.tokenAddress);
         require(
             msg.sender == trade.poster,
             "Error: Trade can be cancelled only by poster"

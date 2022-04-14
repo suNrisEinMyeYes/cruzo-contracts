@@ -3,6 +3,7 @@
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-waffle": "^2.0.1",
+    "@openzeppelin/hardhat-upgrades": "^1.17.0",
     "@openzeppelin/test-helpers": "^0.5.15",
     "@types/chai": "^4.2.22",
     "@types/mocha": "^9.0.0",
@@ -29,8 +30,11 @@
     "typechain": "^5.1.2"
   },
   "scripts": {
+    "console": "npx hardhat console",
     "compile": "npx hardhat compile",
     "deploy": "npx hardhat run scripts/deploy.ts",
-    "abi": "npx hardhat export-abi"
+    "upgrade": "npx hardhat run scripts/upgrade.ts",
+    "abi": "npx hardhat export-abi",
+    "test": "npx hardhat test"
   }
 }

@@ -18,14 +18,26 @@
 - avaxFuji
 
 ## Compile
-`yarn compile`
+```sh
+yarn run compile
+```
 
 ## Deploy
-`yarn deploy --network <supported network>`
 
-### Legacy scripts:
+### Deploy contracts
+```sh
+yarn run deploy --network <supported network>
+```
 
-    "deploy-contract-cronos-mainnet": "npx hardhat run scripts/deploy.ts --network cronosMainnetBeta",
-    "deploy-contract-cronos-testnet": "npx hardhat run scripts/deploy.ts --network cronosTestnet",
-    "deploy-contract-avax-mainnet": "npx hardhat run scripts/deploy.ts --network avaxMainnet",
-    "deploy-contract-avax-testnet": "npx hardhat run scripts/deploy.ts --network avaxFuji"
+### Upgrade
+```sh
+yarn run upgrade --network polygonMumbai
+```
+
+
+## Tests
+
+### Run tests
+```sh
+yarn test
+```

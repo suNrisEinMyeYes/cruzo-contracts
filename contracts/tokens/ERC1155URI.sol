@@ -3,10 +3,11 @@
 pragma solidity ^0.8.6;
 
 import "./ERC1155CruzoBase.sol";
-import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 
-abstract contract ERC1155URI is ERC1155CruzoBase {
-    using Strings for uint256;
+abstract contract ERC1155URI is Initializable, ERC1155CruzoBase {
+    using StringsUpgradeable for uint256;
     enum URIType {
         DEFAULT,
         IPFS,
@@ -14,13 +15,19 @@ abstract contract ERC1155URI is ERC1155CruzoBase {
         URI
     }
 
-    URIType private _uriType = URIType.IPFS;
+    URIType private _uriType;
 
     // Optional mapping for token URIs
     mapping(uint256 => string) private _tokenURIs;
 
     // Base URI
     string private _baseURI;
+
+
+    function initialize() public override initializer {
+        ERC1155CruzoBase.initialize();
+        _uriType = URIType.IPFS;
+    }
 
     /**
      * @dev Returns the base URI set via {_setBaseURI}. This will be
@@ -29,6 +36,10 @@ abstract contract ERC1155URI is ERC1155CruzoBase {
      */
     function baseURI() public view virtual returns (string memory) {
         return _baseURI;
+    }
+
+    function testCopybaseURI() public view virtual returns (string memory) {
+        return string(abi.encodePacked("just for test: ", _baseURI));
     }
 
     /**
