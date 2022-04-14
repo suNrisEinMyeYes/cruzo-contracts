@@ -38,10 +38,6 @@ abstract contract ERC1155URI is Initializable, ERC1155CruzoBase {
         return _baseURI;
     }
 
-    function testCopybaseURI() public view virtual returns (string memory) {
-        return string(abi.encodePacked("just for test: ", _baseURI));
-    }
-
     /**
      * @dev Returns the uriType
      */
