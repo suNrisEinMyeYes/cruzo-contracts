@@ -41,8 +41,11 @@ const config: HardhatUserConfig = {
       accounts: PKS,
     },
     polygonMumbai: {
-      url: "https://matic-mumbai.chainstacklabs.com",
+      url: "https://rpc-mumbai.maticvigil.com",
       accounts: PKS,
+      chainId: 80001,
+      // gas: 2100000,
+      // gasPrice: 8000000000
     },
     polygonMainnet: {
       url: "https://rpc-mainnet.matic.network",
