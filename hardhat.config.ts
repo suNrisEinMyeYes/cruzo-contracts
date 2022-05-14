@@ -82,6 +82,16 @@ const config: HardhatUserConfig = {
       chainId: 43113,
       accounts: PKS,
     },
+    moonbeam: {
+      url: "https://rpc.api.moonbeam.network",
+      chainId: 1284,
+      accounts: PKS,
+    },
+    moonbaseAlpha: {
+      url: "https://rpc.api.moonbase.moonbeam.network",
+      chainId: 1287,
+      accounts: PKS,
+    },
     bobaMainnet: {
       url: "https://mainnet.boba.network",
       chainId: 288,
