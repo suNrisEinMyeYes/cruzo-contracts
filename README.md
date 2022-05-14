@@ -2,20 +2,27 @@
 
 ## Tokens 
 - Cruzo1155
+- CruzoMarket
 
 ## Networks
+### Ethereum
+- ethMainnet
+- ethRinkeby
 ### Binance
-- bscTestnet
 - bscMainnet
+- bscTestnet
 ### Polygon
-- polygonMumbai
 - polygonMainnet
+- polygonMumbai
 ### Cronos
 - cronosMainnetBeta
 - cronosTestnet
 ### Avalanche
 - avaxMainnet
 - avaxFuji
+### Moonbeam
+- moonbeam
+- moonbaseAlpha
 
 ## Compile
 ```sh
