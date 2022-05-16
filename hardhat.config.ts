@@ -78,6 +78,16 @@ const config: HardhatUserConfig = {
       chainId: 43113,
       accounts: PKS,
     },
+    bobaMainnet: {
+      url: 'https://mainnet.boba.network',
+      chainId: 288,
+      accounts: PKS
+    },
+    bobaRinkeby: {
+      url: 'https://rinkeby.boba.network',
+      chainId: 28,
+      accounts: PKS
+    }
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,

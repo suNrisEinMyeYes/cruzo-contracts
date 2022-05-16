@@ -16,6 +16,17 @@
 ### Avalanche
 - avaxMainnet
 - avaxFuji
+### Moonbeam
+- moonbeam
+- moonbaseAlpha
+### Boba
+- bobaMainnet
+- bobaRinkeby
+
+## Compile
+```sh
+yarn run compile
+```
 
 ## Scripts
 
