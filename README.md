@@ -23,6 +23,9 @@
 ### Moonbeam
 - moonbeam
 - moonbaseAlpha
+### Boba
+- bobaMainnet
+- bobaRinkeby
 
 ## Compile
 ```sh
