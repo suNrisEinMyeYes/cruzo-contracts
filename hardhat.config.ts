@@ -4,6 +4,7 @@ import "@typechain/hardhat";
 import "@nomiclabs/hardhat-etherscan";
 import "@openzeppelin/hardhat-upgrades";
 import "hardhat-abi-exporter";
+import "hardhat-contract-sizer";
 import { task, HardhatUserConfig } from "hardhat/config";
 import * as dotenv from "dotenv";
 
