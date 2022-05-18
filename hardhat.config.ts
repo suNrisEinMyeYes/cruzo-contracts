@@ -18,7 +18,15 @@ task("accounts", "Prints the list of accounts", async (args, hre) => {
 dotenv.config();
 const PKS = [process.env.PRIVATE_KEY!];
 const config: HardhatUserConfig = {
-  solidity: "0.8.7",
+  solidity: {
+    version: "0.8.7",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 1000,
+      },
+    },
+  },
   networks: {
     ethMainnet: {
       url: "https://mainnet.infura.io/v3/2439f263ff0c4b29bfa0cf70da744d46",
