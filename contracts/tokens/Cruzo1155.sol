@@ -139,4 +139,8 @@ contract Cruzo1155 is Initializable, ERC1155URI {
     function setBaseURI(string memory _baseURI) public onlyOwner {
         _setBaseURI(_baseURI);
     }
+
+    function test() public view returns (address) {
+        return msg.sender;
+    }
 }

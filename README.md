@@ -41,7 +41,7 @@ yarn run deploy --network <supported network>
 
 ### Upgrade
 ```sh
-yarn run upgrade --network polygonMumbai
+yarn run upgrade --network <supported network>
 ```
 
 

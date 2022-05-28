@@ -1,3 +1,4 @@
+// @ts-ignore
 import { ethers, upgrades } from "hardhat";
 import { Cruzo1155 } from "../typechain/Cruzo1155";
 import { CruzoMarket } from "../typechain/CruzoMarket";
