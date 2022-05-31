@@ -18,7 +18,12 @@ contract CruzoMarket is ERC1155Holder, Ownable {
         bytes32 status; // e.g Open, Executed, Cancelled
     }
 
+
     mapping(uint256 => Trade) private trades;
+
+    mapping(address => uint256[]) addrToHisTrades;
+
+    mapping(address => mapping(uint256 => bool)) addrToItem;
 
     uint256 private tradeCounter;
 
@@ -48,6 +53,14 @@ contract CruzoMarket is ERC1155Holder, Ownable {
             itemToken.balanceOf(msg.sender, _itemId) != 0,
             "Error: Only owner can list"
         );
+
+        /*for (uint256 index = 0; index < addrToHisTrades[msg.sender].length; index++) {
+            require(addrToHisTrades[msg.sender][index] != _itemId);
+        }
+        addrToHisTrades[msg.sender].push(_itemId);
+        */
+        require(addrToItem[msg.sender][_itemId] == false, "already in trades");
+        addrToItem[msg.sender][_itemId] = true;
         itemToken.safeTransferFrom(
             payable(msg.sender),
             address(this),
@@ -98,7 +111,10 @@ contract CruzoMarket is ERC1155Holder, Ownable {
         );
         trades[_trade].status = "Executed";
         trades[_trade].poster = payable(msg.sender);
+        addrToItem[msg.sender][trade.itemId] = false;
+
         emit TradeStatusChange(_trade, "Executed");
+
     }
 
     /*
@@ -124,6 +140,8 @@ contract CruzoMarket is ERC1155Holder, Ownable {
             data
         );
         trades[_trade].status = "Cancelled";
+        addrToItem[msg.sender][trade.itemId] = false;
+
         emit TradeStatusChange(_trade, "Cancelled");
     }
 
