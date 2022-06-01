@@ -20,6 +20,8 @@ contract CruzoMarket is ERC1155Holder, Ownable {
 
     mapping(uint256 => Trade) private trades;
 
+    mapping(address => mapping(address => mapping(uint256 => bool))) ownerToTokenToItem;
+
     uint256 private tradeCounter;
 
     // Get individual trade
@@ -48,6 +50,15 @@ contract CruzoMarket is ERC1155Holder, Ownable {
             itemToken.balanceOf(msg.sender, _itemId) != 0,
             "Error: Only owner can list"
         );
+
+        /*for (uint256 index = 0; index < addrToHisTrades[msg.sender].length; index++) {
+            require(addrToHisTrades[msg.sender][index] != _itemId);
+        }
+        addrToHisTrades[msg.sender].push(_itemId);
+        */
+        require(ownerToTokenToItem[msg.sender][_tokenAddress][_itemId] == false, "already in trades");
+        ownerToTokenToItem[msg.sender][_tokenAddress][_itemId] = true;
+        
         itemToken.safeTransferFrom(
             payable(msg.sender),
             address(this),
@@ -89,6 +100,7 @@ contract CruzoMarket is ERC1155Holder, Ownable {
         );
 
         payable(trade.poster).transfer(msg.value);
+
         itemToken.safeTransferFrom(
             address(this),
             payable(msg.sender),
@@ -97,8 +109,12 @@ contract CruzoMarket is ERC1155Holder, Ownable {
             data
         );
         trades[_trade].status = "Executed";
+        ownerToTokenToItem[trade.poster][trade.tokenAddress][trade.itemId] = false;
+
         trades[_trade].poster = payable(msg.sender);
+
         emit TradeStatusChange(_trade, "Executed");
+
     }
 
     /*
@@ -124,6 +140,8 @@ contract CruzoMarket is ERC1155Holder, Ownable {
             data
         );
         trades[_trade].status = "Cancelled";
+        ownerToTokenToItem[msg.sender][trade.tokenAddress][trade.itemId] = false;
+
         emit TradeStatusChange(_trade, "Cancelled");
     }
 
