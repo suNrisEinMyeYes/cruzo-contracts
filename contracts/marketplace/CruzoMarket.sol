@@ -95,7 +95,6 @@ contract CruzoMarket is ERC1155Holder, Ownable {
         );
 
         payable(trade.poster).transfer(msg.value);
-
         itemToken.safeTransferFrom(
             address(this),
             payable(msg.sender),
@@ -105,11 +104,8 @@ contract CruzoMarket is ERC1155Holder, Ownable {
         );
         trades[_trade].status = "Executed";
         ownerToTokenToItem[trade.poster][trade.tokenAddress][trade.itemId] = false;
-
         trades[_trade].poster = payable(msg.sender);
-
         emit TradeStatusChange(_trade, "Executed");
-
     }
 
     /*
@@ -136,7 +132,6 @@ contract CruzoMarket is ERC1155Holder, Ownable {
         );
         trades[_trade].status = "Cancelled";
         ownerToTokenToItem[msg.sender][trade.tokenAddress][trade.itemId] = false;
-
         emit TradeStatusChange(_trade, "Cancelled");
     }
 
