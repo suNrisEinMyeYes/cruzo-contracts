@@ -51,11 +51,6 @@ contract CruzoMarket is ERC1155Holder, Ownable {
             "Error: Only owner can list"
         );
 
-        /*for (uint256 index = 0; index < addrToHisTrades[msg.sender].length; index++) {
-            require(addrToHisTrades[msg.sender][index] != _itemId);
-        }
-        addrToHisTrades[msg.sender].push(_itemId);
-        */
         require(ownerToTokenToItem[msg.sender][_tokenAddress][_itemId] == false, "already in trades");
         ownerToTokenToItem[msg.sender][_tokenAddress][_itemId] = true;
         
