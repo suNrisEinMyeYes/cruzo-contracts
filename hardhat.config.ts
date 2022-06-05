@@ -3,6 +3,7 @@ import "@nomiclabs/hardhat-waffle";
 import "@typechain/hardhat";
 import "@nomiclabs/hardhat-etherscan";
 import "hardhat-abi-exporter";
+import "hardhat-gas-reporter";
 import { task, HardhatUserConfig } from "hardhat/config";
 import * as dotenv from "dotenv";
 
@@ -16,7 +17,15 @@ task("accounts", "Prints the list of accounts", async (args, hre) => {
 dotenv.config();
 const PKS = [process.env.PRIVATE_KEY!];
 const config: HardhatUserConfig = {
-  solidity: "0.8.7",
+  solidity: {
+    version: "0.8.7",
+    settings: {
+      optimizer: {
+        enabled: true,
+        runs: 1000
+      }
+    }
+  },
   networks: {
     bscTestnet: {
       url: "https://data-seed-prebsc-1-s1.binance.org:8545",
@@ -48,29 +57,32 @@ const config: HardhatUserConfig = {
       accounts: PKS,
     },
     avaxMainnet: {
-      url: 'https://api.avax.network/ext/bc/C/rpc',
+      url: "https://api.avax.network/ext/bc/C/rpc",
       gasPrice: 225000000000,
       chainId: 43114,
-      accounts: PKS
+      accounts: PKS,
     },
     avaxFuji: {
-      url: 'https://api.avax-test.network/ext/bc/C/rpc',
+      url: "https://api.avax-test.network/ext/bc/C/rpc",
       gasPrice: 225000000000,
       chainId: 43113,
-      accounts: PKS
+      accounts: PKS,
     },
   },
   etherscan: {
     apiKey: process.env.ETHERSCAN_API_KEY,
   },
   abiExporter: {
-    path: './data/abi',
+    path: "./data/abi",
     runOnCompile: true,
     clear: true,
     flat: true,
     spacing: 2,
     pretty: false,
-  }
+  },
+  gasReporter: {
+    enabled: true,
+  },
 };
 
 export default config;
