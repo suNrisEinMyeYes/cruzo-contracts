@@ -11,11 +11,13 @@ describe("CruzoMarket", () => {
   let seller: SignerWithAddress;
   let buyer: SignerWithAddress;
 
+  const serviceFee = 300;
+
   beforeEach(async () => {
     const CruzoMarket = await ethers.getContractFactory("CruzoMarket");
     const Cruzo1155 = await ethers.getContractFactory("Cruzo1155");
 
-    market = await CruzoMarket.deploy();
+    market = await CruzoMarket.deploy(serviceFee);
     await market.deployed();
 
     token = await Cruzo1155.deploy("baseURI", market.address);
@@ -59,6 +61,7 @@ describe("CruzoMarket", () => {
 
       const purchaseAmount = ethers.BigNumber.from("5");
       const purchaseValue = price.mul(purchaseAmount);
+      const serviceFeeValue = purchaseValue.mul(serviceFee).div(10000);
 
       expect(await  token.create(supply, seller.address, "", []));
 
@@ -97,7 +100,7 @@ describe("CruzoMarket", () => {
         tradeAmount.sub(purchaseAmount)
       );
 
-      expect(sellerBalance.add(purchaseValue)).eq(
+      expect(sellerBalance.add(purchaseValue).sub(serviceFeeValue)).eq(
         await ethers.provider.getBalance(seller.address)
       );
     });
