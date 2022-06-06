@@ -103,6 +103,8 @@ describe("CruzoMarket", () => {
       expect(sellerBalance.add(purchaseValue).sub(serviceFeeValue)).eq(
         await ethers.provider.getBalance(seller.address)
       );
+
+      expect(await ethers.provider.getBalance(market.address)).eq(serviceFeeValue);
     });
 
     // TODO: add negative test cases: "Amount must be greater than 0", "Not enough items in trade", ...
@@ -139,5 +141,32 @@ describe("CruzoMarket", () => {
     });
 
     // TODO: add negative test cases: "Trade is not open", ...
+  });
+
+  describe("setServiceFee", () => {
+    it("Should set service fee", async () => {
+      expect(await market.serviceFee()).eq(serviceFee);
+
+      expect(await market.setServiceFee(0));
+      expect(await market.serviceFee()).eq(0);
+
+      expect(await market.setServiceFee(1000));
+      expect(await market.serviceFee()).eq(1000);
+
+      expect(await market.setServiceFee(10000));
+      expect(await market.serviceFee()).eq(10000);
+    });
+
+    it("Should not set service fee < 0% or > 100%", async () => {
+      await expect(market.setServiceFee(10001)).to.be.revertedWith('Service fee can not exceed 10,000 basis points');
+      await expect(market.setServiceFee(50000)).to.be.revertedWith('Service fee can not exceed 10,000 basis points');
+      await expect(market.setServiceFee(-1)).to.be.reverted;
+      await expect(market.setServiceFee(-5000)).to.be.reverted;
+      expect(await market.serviceFee()).eq(serviceFee);
+    });
+  });
+
+  describe("withdraw", () => {
+    // TODO: add tests for withdrawal process
   });
 });
