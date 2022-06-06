@@ -25,6 +25,8 @@ contract CruzoMarket is ERC1155Holder, Ownable {
 
     event TradeClosed(address tokenAddress, uint256 tokenId, address seller);
 
+    event WithdrawalCompleted(address beneficiaryAddress, uint256 _amount);
+
     struct Trade {
         uint256 amount;
         uint256 price;
@@ -122,7 +124,11 @@ contract CruzoMarket is ERC1155Holder, Ownable {
         return address(this).balance;
     }
 
-    function withdraw(address _beneficiary, uint256 _amount) public onlyOwner {
-        Address.sendValue(payable(_beneficiary), _amount);
+    function withdraw(address _beneficiaryAddress, uint256 _amount) public onlyOwner {
+        Address.sendValue(payable(_beneficiaryAddress), _amount);
+        emit WithdrawalCompleted(
+            _beneficiaryAddress,
+            _amount
+        );
     }
 }

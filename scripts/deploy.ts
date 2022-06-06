@@ -4,8 +4,9 @@ import { CruzoMarket } from "../typechain/CruzoMarket";
 
 async function main() {
   console.log("Deploying market contract");
+  const marketServiceFee = parseInt(process.env.MARKET_SERVICE_FEE || '');
   const Market = await ethers.getContractFactory("CruzoMarket");
-  const market = (await Market.deploy()) as CruzoMarket;
+  const market = (await Market.deploy(marketServiceFee)) as CruzoMarket;
 
   console.log("Market Contract Deployed");
   console.log("Market Contract Address : ", market.address);
