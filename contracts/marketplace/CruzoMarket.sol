@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: un-licensed
+//SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
@@ -33,6 +33,14 @@ contract CruzoMarket is ERC1155Holder, Ownable {
     // tokenAddress => tokenId => seller => trade
     mapping(address => mapping(uint256 => mapping(address => Trade)))
         public trades;
+
+    // Service fee percantage in basis point (100bp = 1%)
+    uint16 public serviceFee;
+
+    constructor(uint16 _serviceFee) {
+        require(_serviceFee <= 10000, "Service fee can not exceed 10,000 basis points");
+        serviceFee = _serviceFee;
+    }
 
     function openTrade(
         address _tokenAddress,
@@ -74,8 +82,7 @@ contract CruzoMarket is ERC1155Holder, Ownable {
             "Ether value sent is incorrect"
         );
         trade.amount -= _amount;
-        // TODO: add service fee
-        Address.sendValue(payable(_seller), msg.value);
+        Address.sendValue(payable(_seller), msg.value * (10000 - uint256(serviceFee)) / 10000);
         IERC1155(_tokenAddress).safeTransferFrom(
             address(this),
             msg.sender,
@@ -104,5 +111,18 @@ contract CruzoMarket is ERC1155Holder, Ownable {
         );
         delete trades[_tokenAddress][_tokenId][msg.sender];
         emit TradeClosed(_tokenAddress, _tokenId, msg.sender);
+    }
+
+    function setServiceFee(uint16 _serviceFee) public onlyOwner {
+        require(_serviceFee <= 10000, "Service fee can not exceed 10,000 basis points");
+        serviceFee = _serviceFee;
+    }
+
+    function getBalance() public view returns (uint256) {
+        return address(this).balance;
+    }
+
+    function withdraw(address _beneficiary, uint256 _amount) public onlyOwner {
+        Address.sendValue(payable(_beneficiary), _amount);
     }
 }
