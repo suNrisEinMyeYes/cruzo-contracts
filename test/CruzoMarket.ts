@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { Cruzo1155 } from "../typechain/Cruzo1155";
 import { CruzoMarket } from "../typechain/CruzoMarket";
-import {BigNumber, BigNumberish} from "ethers";
+import {  BigNumberish } from "ethers";
 
 describe("CruzoMarket", () => {
   let market: CruzoMarket;
