@@ -3,25 +3,30 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { Cruzo1155 } from "../typechain/Cruzo1155";
 import { CruzoMarket } from "../typechain/CruzoMarket";
+import { BigNumberish } from "ethers";
 
 describe("CruzoMarket", () => {
   let market: CruzoMarket;
   let token: Cruzo1155;
 
+  let owner: SignerWithAddress;
   let seller: SignerWithAddress;
   let buyer: SignerWithAddress;
 
+  const serviceFee = 300;
+  const serviceFeeBase = 10000;
+
   beforeEach(async () => {
+    [owner, seller, buyer] = await ethers.getSigners();
+
     const CruzoMarket = await ethers.getContractFactory("CruzoMarket");
     const Cruzo1155 = await ethers.getContractFactory("Cruzo1155");
 
-    market = await CruzoMarket.deploy();
+    market = await CruzoMarket.deploy(serviceFee);
     await market.deployed();
 
     token = await Cruzo1155.deploy("baseURI", market.address);
     await token.deployed();
-
-    [seller, buyer] = await ethers.getSigners();
   });
 
   describe("openTrade", () => {
@@ -31,9 +36,15 @@ describe("CruzoMarket", () => {
       const tradeAmount = ethers.BigNumber.from("10");
       const price = ethers.utils.parseEther("0.01");
 
-      expect(await token.create(supply, seller.address, "", []));
+      expect(
+        await token.connect(seller).create(supply, seller.address, "", [])
+      );
 
-      await expect(market.openTrade(token.address, tokenId, tradeAmount, price))
+      await expect(
+        market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
+      )
         .emit(market, "TradeOpened")
         .withArgs(token.address, tokenId, seller.address, tradeAmount, price);
 
@@ -59,11 +70,16 @@ describe("CruzoMarket", () => {
 
       const purchaseAmount = ethers.BigNumber.from("5");
       const purchaseValue = price.mul(purchaseAmount);
-
-      expect(await  token.create(supply, seller.address, "", []));
+      const serviceFeeValue = purchaseValue.mul(serviceFee).div(serviceFeeBase);
 
       expect(
-        await market.openTrade(token.address, tokenId, tradeAmount, price)
+        await token.connect(seller).create(supply, seller.address, "", [])
+      );
+
+      expect(
+        await market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
       );
 
       expect(await token.balanceOf(buyer.address, tokenId)).eq(0);
@@ -97,8 +113,12 @@ describe("CruzoMarket", () => {
         tradeAmount.sub(purchaseAmount)
       );
 
-      expect(sellerBalance.add(purchaseValue)).eq(
+      expect(sellerBalance.add(purchaseValue).sub(serviceFeeValue)).eq(
         await ethers.provider.getBalance(seller.address)
+      );
+
+      expect(await ethers.provider.getBalance(market.address)).eq(
+        serviceFeeValue
       );
     });
 
@@ -112,9 +132,15 @@ describe("CruzoMarket", () => {
       const tradeAmount = ethers.BigNumber.from("10");
       const price = ethers.utils.parseEther("0.01");
 
-      expect(await token.create(supply, seller.address, "", []));
+      expect(
+        await token.connect(seller).create(supply, seller.address, "", [])
+      );
 
-      expect(await market.openTrade(token.address, tokenId, tradeAmount, price));
+      expect(
+        await market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
+      );
 
       let trade = await market.trades(token.address, tokenId, seller.address);
       expect(trade.price).eq(price);
@@ -124,7 +150,7 @@ describe("CruzoMarket", () => {
         supply.sub(tradeAmount)
       );
 
-      await expect(market.closeTrade(token.address, tokenId))
+      await expect(market.connect(seller).closeTrade(token.address, tokenId))
         .emit(market, "TradeClosed")
         .withArgs(token.address, tokenId, seller.address);
 
@@ -136,5 +162,96 @@ describe("CruzoMarket", () => {
     });
 
     // TODO: add negative test cases: "Trade is not open", ...
+  });
+
+  describe("setServiceFee", () => {
+    it("Should set service fee", async () => {
+      expect(await market.serviceFee()).eq(serviceFee);
+
+      expect(await market.setServiceFee(0));
+      expect(await market.serviceFee()).eq(0);
+
+      expect(await market.setServiceFee(1000));
+      expect(await market.serviceFee()).eq(1000);
+
+      expect(await market.setServiceFee(10000));
+      expect(await market.serviceFee()).eq(10000);
+    });
+
+    it("Should not set service fee < 0% or > 100%", async () => {
+      await expect(market.setServiceFee(10001)).to.be.revertedWith(
+        "Service fee can not exceed 10,000 basis points"
+      );
+      await expect(market.setServiceFee(50000)).to.be.revertedWith(
+        "Service fee can not exceed 10,000 basis points"
+      );
+      await expect(market.setServiceFee(-1)).to.be.reverted;
+      await expect(market.setServiceFee(-5000)).to.be.reverted;
+      expect(await market.serviceFee()).eq(serviceFee);
+    });
+  });
+
+  describe("withdraw", () => {
+    it("Should withdraw funds", async () => {
+      const tokenId = ethers.BigNumber.from("1");
+      const supply = ethers.BigNumber.from("100");
+      const tradeAmount = ethers.BigNumber.from("10");
+      const price = ethers.utils.parseEther("0.01");
+
+      const purchaseAmount = ethers.BigNumber.from("5");
+      const purchaseValue = price.mul(purchaseAmount);
+      const serviceFeeValue = purchaseValue.mul(serviceFee).div(serviceFeeBase);
+
+      const ownerBalance = await ethers.provider.getBalance(owner.address);
+
+      expect(
+        await token.connect(seller).create(supply, seller.address, "", [])
+      );
+
+      expect(
+        await market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
+      );
+
+      await expect(
+        market
+          .connect(buyer)
+          .executeTrade(
+            token.address,
+            tokenId,
+            seller.address,
+            purchaseAmount,
+            {
+              value: purchaseValue,
+            }
+          )
+      ).emit(market, "TradeExecuted");
+
+      expect(await ethers.provider.getBalance(market.address)).eq(
+        serviceFeeValue
+      );
+
+      let txUsedGasPrice: BigNumberish = 0;
+      await expect(
+        market
+          .connect(owner)
+          .withdraw(owner.address, serviceFeeValue)
+          .then(async (tx) => {
+            const receipt = await tx.wait();
+            txUsedGasPrice = receipt.effectiveGasPrice.mul(receipt.gasUsed);
+            return tx;
+          })
+      )
+        .emit(market, "WithdrawalCompleted")
+        .withArgs(owner.address, serviceFeeValue);
+
+      expect(await ethers.provider.getBalance(market.address)).eq(0);
+      expect(ownerBalance.add(serviceFeeValue.sub(txUsedGasPrice))).eq(
+        await ethers.provider.getBalance(owner.address)
+      );
+    });
+
+    // TODO: add negative test cases
   });
 });
