@@ -40,8 +40,7 @@ contract CruzoMarket is ERC1155Holder, Ownable {
     uint16 public serviceFee;
 
     constructor(uint16 _serviceFee) {
-        require(_serviceFee <= 10000, "Service fee can not exceed 10,000 basis points");
-        serviceFee = _serviceFee;
+        setServiceFee(_serviceFee);
     }
 
     function openTrade(
