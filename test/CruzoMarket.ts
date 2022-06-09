@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 import { Cruzo1155 } from "../typechain/Cruzo1155";
 import { CruzoMarket } from "../typechain/CruzoMarket";
-import {  BigNumberish } from "ethers";
+import { BigNumberish } from "ethers";
 
 describe("CruzoMarket", () => {
   let market: CruzoMarket;
@@ -36,14 +36,14 @@ describe("CruzoMarket", () => {
       const tradeAmount = ethers.BigNumber.from("10");
       const price = ethers.utils.parseEther("0.01");
 
-      expect(await token
-        .connect(seller)
-        .create(supply, seller.address, "", [])
+      expect(
+        await token.connect(seller).create(supply, seller.address, "", [])
       );
 
-      await expect(market
-        .connect(seller)
-        .openTrade(token.address, tokenId, tradeAmount, price)
+      await expect(
+        market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
       )
         .emit(market, "TradeOpened")
         .withArgs(token.address, tokenId, seller.address, tradeAmount, price);
@@ -72,14 +72,14 @@ describe("CruzoMarket", () => {
       const purchaseValue = price.mul(purchaseAmount);
       const serviceFeeValue = purchaseValue.mul(serviceFee).div(serviceFeeBase);
 
-      expect(await token
-        .connect(seller)
-        .create(supply, seller.address, "", [])
+      expect(
+        await token.connect(seller).create(supply, seller.address, "", [])
       );
 
-      expect(await market
-        .connect(seller)
-        .openTrade(token.address, tokenId, tradeAmount, price)
+      expect(
+        await market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
       );
 
       expect(await token.balanceOf(buyer.address, tokenId)).eq(0);
@@ -117,7 +117,9 @@ describe("CruzoMarket", () => {
         await ethers.provider.getBalance(seller.address)
       );
 
-      expect(await ethers.provider.getBalance(market.address)).eq(serviceFeeValue);
+      expect(await ethers.provider.getBalance(market.address)).eq(
+        serviceFeeValue
+      );
     });
 
     // TODO: add negative test cases: "Amount must be greater than 0", "Not enough items in trade", ...
@@ -130,14 +132,14 @@ describe("CruzoMarket", () => {
       const tradeAmount = ethers.BigNumber.from("10");
       const price = ethers.utils.parseEther("0.01");
 
-      expect(await token
-        .connect(seller)
-        .create(supply, seller.address, "", [])
+      expect(
+        await token.connect(seller).create(supply, seller.address, "", [])
       );
 
-      expect(await market
-        .connect(seller)
-        .openTrade(token.address, tokenId, tradeAmount, price)
+      expect(
+        await market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
       );
 
       let trade = await market.trades(token.address, tokenId, seller.address);
@@ -148,10 +150,7 @@ describe("CruzoMarket", () => {
         supply.sub(tradeAmount)
       );
 
-      await expect(market
-          .connect(seller)
-          .closeTrade(token.address, tokenId)
-      )
+      await expect(market.connect(seller).closeTrade(token.address, tokenId))
         .emit(market, "TradeClosed")
         .withArgs(token.address, tokenId, seller.address);
 
@@ -180,8 +179,12 @@ describe("CruzoMarket", () => {
     });
 
     it("Should not set service fee < 0% or > 100%", async () => {
-      await expect(market.setServiceFee(10001)).to.be.revertedWith('Service fee can not exceed 10,000 basis points');
-      await expect(market.setServiceFee(50000)).to.be.revertedWith('Service fee can not exceed 10,000 basis points');
+      await expect(market.setServiceFee(10001)).to.be.revertedWith(
+        "Service fee can not exceed 10,000 basis points"
+      );
+      await expect(market.setServiceFee(50000)).to.be.revertedWith(
+        "Service fee can not exceed 10,000 basis points"
+      );
       await expect(market.setServiceFee(-1)).to.be.reverted;
       await expect(market.setServiceFee(-5000)).to.be.reverted;
       expect(await market.serviceFee()).eq(serviceFee);
@@ -201,14 +204,14 @@ describe("CruzoMarket", () => {
 
       const ownerBalance = await ethers.provider.getBalance(owner.address);
 
-      expect(await token
-        .connect(seller)
-        .create(supply, seller.address, "", [])
+      expect(
+        await token.connect(seller).create(supply, seller.address, "", [])
       );
 
-      expect(await market
-        .connect(seller)
-        .openTrade(token.address, tokenId, tradeAmount, price)
+      expect(
+        await market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
       );
 
       await expect(
@@ -225,25 +228,27 @@ describe("CruzoMarket", () => {
           )
       ).emit(market, "TradeExecuted");
 
-      expect(await ethers.provider.getBalance(market.address)).eq(serviceFeeValue);
+      expect(await ethers.provider.getBalance(market.address)).eq(
+        serviceFeeValue
+      );
 
       let txUsedGasPrice: BigNumberish = 0;
       await expect(
-          market
-              .connect(owner)
-              .withdraw(owner.address, serviceFeeValue)
-              .then(async (tx) => {
-                const receipt = await tx.wait();
-                txUsedGasPrice = receipt.effectiveGasPrice.mul(receipt.gasUsed);
-                return tx;
-              })
+        market
+          .connect(owner)
+          .withdraw(owner.address, serviceFeeValue)
+          .then(async (tx) => {
+            const receipt = await tx.wait();
+            txUsedGasPrice = receipt.effectiveGasPrice.mul(receipt.gasUsed);
+            return tx;
+          })
       )
-          .emit(market, "WithdrawalCompleted")
-          .withArgs(owner.address, serviceFeeValue);
+        .emit(market, "WithdrawalCompleted")
+        .withArgs(owner.address, serviceFeeValue);
 
       expect(await ethers.provider.getBalance(market.address)).eq(0);
       expect(ownerBalance.add(serviceFeeValue.sub(txUsedGasPrice))).eq(
-          await ethers.provider.getBalance(owner.address)
+        await ethers.provider.getBalance(owner.address)
       );
     });
 

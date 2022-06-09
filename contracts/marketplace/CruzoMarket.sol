@@ -36,7 +36,7 @@ contract CruzoMarket is ERC1155Holder, Ownable {
     mapping(address => mapping(uint256 => mapping(address => Trade)))
         public trades;
 
-    // Service fee percantage in basis point (100bp = 1%)
+    // Service fee percentage in basis point (100bp = 1%)
     uint16 public serviceFee;
 
     constructor(uint16 _serviceFee) {

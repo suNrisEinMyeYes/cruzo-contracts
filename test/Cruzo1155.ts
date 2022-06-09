@@ -30,7 +30,10 @@ describe("Testing Cruzo1155 Contract", () => {
 
   beforeEach(async () => {
     let Token = await ethers.getContractFactory("Cruzo1155");
-    token = (await Token.deploy(tokenDetails.baseOnlyURI, "0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc")) as Cruzo1155;
+    token = (await Token.deploy(
+      tokenDetails.baseOnlyURI,
+      "0x9965507D1a55bcC2695C58ba16FB37d819B0A4dc"
+    )) as Cruzo1155;
   });
 
   it("Check Contract Data", async () => {
@@ -95,22 +98,34 @@ describe("Testing Cruzo1155 Contract", () => {
 
   it("Check marketAddress approval", async () => {
     await token.create(1000, admin.address, "", []);
-    await expect(token.connect(signers[1]).safeTransferFrom(admin.address, signers[1].address, 1, 1, [])).to.be.reverted;
-    await expect(token.connect(signers[5]).safeTransferFrom(admin.address, signers[1].address, 1, 1, [])).not.to.be.reverted;
+    await expect(
+      token
+        .connect(signers[1])
+        .safeTransferFrom(admin.address, signers[1].address, 1, 1, [])
+    ).to.be.reverted;
+    await expect(
+      token
+        .connect(signers[5])
+        .safeTransferFrom(admin.address, signers[1].address, 1, 1, [])
+    ).not.to.be.reverted;
     expect(await token.balanceOf(signers[1].address, 1)).equal(1);
   });
 
   it("Should puase and unpause", async () => {
     await token.create(1000, admin.address, "", []);
-    await expect(token.safeTransferFrom(admin.address, signers[1].address, 1, 1, [])).not.to.be.reverted;
+    await expect(
+      token.safeTransferFrom(admin.address, signers[1].address, 1, 1, [])
+    ).not.to.be.reverted;
     await token.pause();
     expect(await token.paused()).equal(true);
-    await expect(token.safeTransferFrom(admin.address, signers[1].address, 1, 1, [])).to.be.revertedWith(
-      "ERC1155CruzoBase: token transfer while paused"
-    );
+    await expect(
+      token.safeTransferFrom(admin.address, signers[1].address, 1, 1, [])
+    ).to.be.revertedWith("ERC1155CruzoBase: token transfer while paused");
     await token.unpause();
     expect(await token.paused()).equal(false);
-    await expect(token.safeTransferFrom(admin.address, signers[1].address, 1, 1, [])).not.to.be.reverted;
+    await expect(
+      token.safeTransferFrom(admin.address, signers[1].address, 1, 1, [])
+    ).not.to.be.reverted;
     expect(await token.balanceOf(signers[1].address, 1)).equal(2);
   });
 
@@ -121,9 +136,9 @@ describe("Testing Cruzo1155 Contract", () => {
     await token.mintTo(2, 1, signers[1].address, []);
     expect(await token.balanceOf(signers[1].address, 1)).equal(2);
     expect(await token.balanceOf(signers[1].address, 2)).equal(2);
-    await expect(token.connect(signers[1]).mintTo(1, 1, signers[1].address, [])).revertedWith(
-      "ERC1155CruzoBase#onlyCreator: ONLY_CREATOR_ALLOWED"
-    );
+    await expect(
+      token.connect(signers[1]).mintTo(1, 1, signers[1].address, [])
+    ).revertedWith("ERC1155CruzoBase#onlyCreator: ONLY_CREATOR_ALLOWED");
   });
 
   it("Should update balance and totalSupply on burn", async () => {
@@ -137,14 +152,19 @@ describe("Testing Cruzo1155 Contract", () => {
 
   it("Should not burn if msg.sender is not approved", async () => {
     await token.create(1000, signers[1].address, "", []);
-    await expect(token.burn(signers[1].address, 1, 1)).to.revertedWith("ERC1155CruzoBase: caller is not owner nor approved");
+    await expect(token.burn(signers[1].address, 1, 1)).to.revertedWith(
+      "ERC1155CruzoBase: caller is not owner nor approved"
+    );
   });
 
   it("Should update balance and totalSupply on burnBatch", async () => {
     await token.create(1000, admin.address, "", []);
     await token.create(1000, admin.address, "", []);
     await token.burnBatch(admin.address, [1, 2], [2, 2]);
-    const batchBal = await token.balanceOfBatch([admin.address, admin.address], [1, 2]);
+    const batchBal = await token.balanceOfBatch(
+      [admin.address, admin.address],
+      [1, 2]
+    );
     expect(await token.totalSupply(1)).equal(998);
     expect(await token.totalSupply(2)).equal(998);
     expect(batchBal[0]).to.equal(998);
