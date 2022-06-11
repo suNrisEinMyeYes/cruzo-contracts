@@ -58,7 +58,66 @@ describe("CruzoMarket", () => {
       expect(trade.amount).eq(tradeAmount);
     });
 
-    // TODO: add negative test cases: "Trade is already open", ...
+    it("Trade is already open", async () => {
+      const tokenId = ethers.BigNumber.from("1");
+      const supply = ethers.BigNumber.from("100");
+      const tradeAmount = ethers.BigNumber.from("10");
+      const price = ethers.utils.parseEther("0.01");
+
+      expect(
+        await token.connect(seller).create(supply, seller.address, "", [])
+      );
+
+      expect(
+        await market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
+      );
+
+      await expect(
+        market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
+      ).revertedWith("Trade is already open");
+    });
+
+    it("Not approved", async () => {
+      const tokenId = ethers.BigNumber.from("1");
+      const supply = ethers.BigNumber.from("100");
+      const tradeAmount = supply.add(1);
+      const price = ethers.utils.parseEther("0.01");
+
+      expect(
+        await token.connect(seller).create(supply, seller.address, "", [])
+      );
+
+      expect(
+        await token.connect(seller).setApprovalForAll(market.address, false)
+      );
+
+      await expect(
+        market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
+      ).revertedWith("ERC1155: caller is not owner nor approved");
+    });
+
+    it("Insufficient balance", async () => {
+      const tokenId = ethers.BigNumber.from("1");
+      const supply = ethers.BigNumber.from("100");
+      const tradeAmount = supply.add(1);
+      const price = ethers.utils.parseEther("0.01");
+
+      expect(
+        await token.connect(seller).create(supply, seller.address, "", [])
+      );
+
+      await expect(
+        market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
+      ).revertedWith("ERC1155: insufficient balance for transfer");
+    });
   });
 
   describe("executeTrade", () => {
@@ -122,7 +181,142 @@ describe("CruzoMarket", () => {
       );
     });
 
-    // TODO: add negative test cases: "Amount must be greater than 0", "Not enough items in trade", ...
+    it("Trade cannot be executed by the seller", async () => {
+      const tokenId = ethers.BigNumber.from("1");
+      const supply = ethers.BigNumber.from("100");
+      const tradeAmount = ethers.BigNumber.from("10");
+      const price = ethers.utils.parseEther("0.01");
+
+      expect(
+        await token.connect(seller).create(supply, seller.address, "", [])
+      );
+
+      expect(
+        await market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
+      );
+
+      await expect(
+        market
+          .connect(seller)
+          .executeTrade(token.address, tokenId, seller.address, tradeAmount)
+      ).revertedWith("Trade cannot be executed by the seller");
+    });
+
+    it("Amount must be greater than 0", async () => {
+      const tokenId = ethers.BigNumber.from("1");
+      const supply = ethers.BigNumber.from("100");
+      const tradeAmount = ethers.BigNumber.from("10");
+      const price = ethers.utils.parseEther("0.01");
+
+      expect(
+        await token.connect(seller).create(supply, seller.address, "", [])
+      );
+
+      expect(
+        await market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
+      );
+
+      await expect(
+        market
+          .connect(buyer)
+          .executeTrade(token.address, tokenId, seller.address, "0")
+      ).revertedWith("Amount must be greater than 0");
+    });
+
+    it("Not enough items in trade", async () => {
+      const tokenId = ethers.BigNumber.from("1");
+      const supply = ethers.BigNumber.from("100");
+      const tradeAmount = ethers.BigNumber.from("10");
+      const price = ethers.utils.parseEther("0.01");
+
+      expect(
+        await token.connect(seller).create(supply, seller.address, "", [])
+      );
+
+      expect(
+        await market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
+      );
+
+      await expect(
+        market
+          .connect(buyer)
+          .executeTrade(
+            token.address,
+            tokenId,
+            seller.address,
+            tradeAmount.add("1")
+          )
+      ).revertedWith("Not enough items in trade");
+    });
+
+    it("Ether value sent is incorrect", async () => {
+      const tokenId = ethers.BigNumber.from("1");
+      const supply = ethers.BigNumber.from("100");
+      const tradeAmount = ethers.BigNumber.from("10");
+      const price = ethers.utils.parseEther("0.01");
+
+      expect(
+        await token.connect(seller).create(supply, seller.address, "", [])
+      );
+
+      expect(
+        await market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
+      );
+
+      await expect(
+        market
+          .connect(buyer)
+          .executeTrade(token.address, tokenId, seller.address, tradeAmount, {
+            value: 0,
+          })
+      ).revertedWith("Ether value sent is incorrect");
+    });
+
+    it("ContractSeller (reentrant call)", async () => {
+      const ContractSeller = await ethers.getContractFactory("ContractSeller");
+      const contractSeller = await ContractSeller.deploy(
+        market.address,
+        token.address
+      );
+      await contractSeller.deployed();
+
+      const tokenId = ethers.BigNumber.from("1");
+      const supply = ethers.BigNumber.from("100");
+      const tradeAmount = ethers.BigNumber.from("10");
+      const price = ethers.utils.parseEther("0.01");
+
+      const purchaseAmount = ethers.BigNumber.from("5");
+
+      expect(
+        await token
+          .connect(seller)
+          .create(supply, contractSeller.address, "", [])
+      );
+
+      expect(await contractSeller.openTrade(tokenId, tradeAmount, price));
+
+      await expect(
+        market.executeTrade(
+          token.address,
+          tokenId,
+          contractSeller.address,
+          purchaseAmount,
+          {
+            value: price.mul(purchaseAmount),
+          }
+        )
+      ).revertedWith(
+        "Address: unable to send value, recipient may have reverted"
+      );
+    });
   });
 
   describe("closeTrade", () => {
@@ -161,7 +355,11 @@ describe("CruzoMarket", () => {
       expect(await token.balanceOf(seller.address, tokenId)).eq(supply);
     });
 
-    // TODO: add negative test cases: "Trade is not open", ...
+    it("Trade is not open", async () => {
+      await expect(
+        market.connect(seller).closeTrade(token.address, "1")
+      ).revertedWith("Trade is not open");
+    });
   });
 
   describe("setServiceFee", () => {
@@ -251,7 +449,5 @@ describe("CruzoMarket", () => {
         await ethers.provider.getBalance(owner.address)
       );
     });
-
-    // TODO: add negative test cases
   });
 });
