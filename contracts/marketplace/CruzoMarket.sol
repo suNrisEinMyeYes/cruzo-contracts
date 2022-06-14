@@ -5,8 +5,9 @@ import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract CruzoMarket is ERC1155Holder, Ownable {
+contract CruzoMarket is ERC1155Holder, Ownable, ReentrancyGuard {
     event TradeOpened(
         address tokenAddress,
         uint256 tokenId,
@@ -48,7 +49,7 @@ contract CruzoMarket is ERC1155Holder, Ownable {
         uint256 _tokenId,
         uint256 _amount,
         uint256 _price
-    ) external {
+    ) external nonReentrant {
         require(
             trades[_tokenAddress][_tokenId][msg.sender].amount == 0,
             "Trade is already open"
@@ -72,9 +73,11 @@ contract CruzoMarket is ERC1155Holder, Ownable {
         uint256 _tokenId,
         address _seller,
         uint256 _amount
-    ) external payable {
-        // TODO: add nonReentrant modifier?
-
+    ) external payable nonReentrant {
+        require(
+            msg.sender != _seller,
+            "Trade cannot be executed by the seller"
+        );
         Trade storage trade = trades[_tokenAddress][_tokenId][_seller];
         require(_amount > 0, "Amount must be greater than 0");
         require(trade.amount >= _amount, "Not enough items in trade");
@@ -83,13 +86,16 @@ contract CruzoMarket is ERC1155Holder, Ownable {
             "Ether value sent is incorrect"
         );
         trade.amount -= _amount;
-        Address.sendValue(payable(_seller), msg.value * (10000 - uint256(serviceFee)) / 10000);
         IERC1155(_tokenAddress).safeTransferFrom(
             address(this),
             msg.sender,
             _tokenId,
             _amount,
             ""
+        );
+        Address.sendValue(
+            payable(_seller),
+            (msg.value * (10000 - uint256(serviceFee))) / 10000
         );
         emit TradeExecuted(
             _tokenAddress,
@@ -100,7 +106,10 @@ contract CruzoMarket is ERC1155Holder, Ownable {
         );
     }
 
-    function closeTrade(address _tokenAddress, uint256 _tokenId) external {
+    function closeTrade(address _tokenAddress, uint256 _tokenId)
+        external
+        nonReentrant
+    {
         Trade memory trade = trades[_tokenAddress][_tokenId][msg.sender];
         require(trade.amount > 0, "Trade is not open");
         IERC1155(_tokenAddress).safeTransferFrom(
@@ -115,19 +124,18 @@ contract CruzoMarket is ERC1155Holder, Ownable {
     }
 
     function setServiceFee(uint16 _serviceFee) public onlyOwner {
-        require(_serviceFee <= 10000, "Service fee can not exceed 10,000 basis points");
+        require(
+            _serviceFee <= 10000,
+            "Service fee can not exceed 10,000 basis points"
+        );
         serviceFee = _serviceFee;
     }
 
-    function getBalance() public view returns (uint256) {
-        return address(this).balance;
-    }
-
-    function withdraw(address _beneficiaryAddress, uint256 _amount) public onlyOwner {
+    function withdraw(address _beneficiaryAddress, uint256 _amount)
+        public
+        onlyOwner
+    {
         Address.sendValue(payable(_beneficiaryAddress), _amount);
-        emit WithdrawalCompleted(
-            _beneficiaryAddress,
-            _amount
-        );
+        emit WithdrawalCompleted(_beneficiaryAddress, _amount);
     }
 }
