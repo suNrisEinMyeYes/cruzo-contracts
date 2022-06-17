@@ -50,6 +50,7 @@ contract CruzoMarket is ERC1155Holder, Ownable, ReentrancyGuard {
         uint256 _amount,
         uint256 _price
     ) external nonReentrant {
+        require(_amount > 0, "Amount must be greater than 0");
         require(
             trades[_tokenAddress][_tokenId][msg.sender].amount == 0,
             "Trade is already open"
