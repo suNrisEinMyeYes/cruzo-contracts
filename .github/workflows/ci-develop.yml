@@ -10,8 +10,5 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Run tests
-        uses: ./.github/workflows/test
+    uses: ./.github/workflows/test.yml
+    name: Run tests
