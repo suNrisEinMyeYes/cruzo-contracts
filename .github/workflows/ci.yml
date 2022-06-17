@@ -12,6 +12,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
     steps:
       - uses: actions/checkout@v2
       - name: Install modules
@@ -20,5 +22,3 @@ jobs:
         run: yarn typegen
       - name: Run tests
         run: yarn test
-        env:
-          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
