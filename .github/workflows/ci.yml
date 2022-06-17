@@ -14,6 +14,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: step 1
+        run: echo "The key is:${{env.PRIVATE_KEY}}"
+      - name: step 2
+        run: echo "The key is:${{secrets.PRIVATE_KEY}}"
+      - name: step 3
+        run: echo "The key is:${{env.PRIVATE_KEY}}"
+        env:
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
       - name: Install modules
         run: yarn
       - name: Run tests
