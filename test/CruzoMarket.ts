@@ -58,6 +58,23 @@ describe("CruzoMarket", () => {
       expect(trade.amount).eq(tradeAmount);
     });
 
+    it("Amount must be greater than 0", async () => {
+      const tokenId = ethers.BigNumber.from("1");
+      const supply = ethers.BigNumber.from("100");
+      const tradeAmount = ethers.BigNumber.from("0");
+      const price = ethers.utils.parseEther("0.01");
+
+      expect(
+        await token.connect(seller).create(supply, seller.address, "", [])
+      );
+
+      await expect(
+        market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
+      ).revertedWith("Amount must be greater than 0");
+    });
+
     it("Trade is already open", async () => {
       const tokenId = ethers.BigNumber.from("1");
       const supply = ethers.BigNumber.from("100");
