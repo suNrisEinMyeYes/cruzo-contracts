@@ -12,6 +12,5 @@ jobs:
   test:
     name: Run tests
     uses: ./.github/workflows/test.yml
-    with:
-      privateKey: ${{ secrets.PRIVATE_KEY }}
-      marketServiceFee: ${{ secrets.MARKET_SERVICE_FEE }}
+    secrets: inherit
+
