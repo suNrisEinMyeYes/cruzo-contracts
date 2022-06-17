@@ -33,6 +33,7 @@
   "scripts": {
     "compile": "npx hardhat compile",
     "deploy": "npx hardhat run scripts/deploy.ts",
-    "abi": "npx hardhat export-abi"
+    "abi": "npx hardhat export-abi",
+    "test": "npx hardhat test"
   }
 }
