@@ -2,13 +2,20 @@ name: Test
 
 on:
   workflow_call:
+    inputs:
+      privateKey:
+        required: true
+        type: string
+      marketServiceFee:
+        required: false
+        type: string
 
 jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-      MARKET_SERVICE_FEE: ${{ secrets.MARKET_SERVICE_FEE }}
+      PRIVATE_KEY: ${{ inputs.privateKey }}
+      MARKET_SERVICE_FEE: ${{ inputs.marketServiceFee }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
