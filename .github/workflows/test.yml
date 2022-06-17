@@ -11,7 +11,7 @@ jobs:
       MARKET_SERVICE_FEE: ${{ secrets.MARKET_SERVICE_FEE }}
     steps:
       - name: Checkout code
-      - uses: actions/checkout@v2
+        uses: actions/checkout@v2
       - name: Install modules
         run: yarn
       - name: Generate typings
