@@ -32,6 +32,7 @@
   },
   "scripts": {
     "compile": "npx hardhat compile",
+    "typegen": "npx hardhat typechain",
     "deploy": "npx hardhat run scripts/deploy.ts",
     "abi": "npx hardhat export-abi",
     "test": "npx hardhat test"
