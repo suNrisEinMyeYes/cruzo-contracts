@@ -450,4 +450,10 @@ describe("CruzoMarket", () => {
       );
     });
   });
+
+  describe("test", () => {
+    it("Should fail", () => {
+      expect(0).eq(1);
+    });
+  });
 });
