@@ -1,0 +1,40 @@
+name: Deploy
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    env:
+      PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+      MARKET_SERVICE_FEE: ${{ secrets.MARKET_SERVICE_FEE }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install modules
+        run: yarn
+      - name: Compile
+        run: yarn compile
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: compiled
+          path: data/artifacts
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+      MARKET_SERVICE_FEE: ${{ secrets.MARKET_SERVICE_FEE }}
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: compiled
+      - name: Deploy to Rinkeby network
+        run: yarn deploy --network ethRinkeby
+        if: ${{ inputs.environment == 'testnet' }}
