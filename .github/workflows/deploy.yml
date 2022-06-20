@@ -27,12 +27,19 @@ jobs:
         if: ${{ inputs.environment == 'mainnet' }}
         run: yarn deploy --network ethMainnet
       - name: Parse contract addresses
+        id: parse-contract-addresses
         run: |
           cat deploy.log
-          marketContractAddress=$(the_command | sed -n 's/Market Contract Address : \(.*\)/\1/p')
-          echo $marketContractAddress
+          ethRinkebyMarketContractAddress=$(cat deploy.log | sed -n 's/Market Contract Address : \(.*\)/\1/p')
+          echo $ethRinkebyMarketContractAddress
+          echo "::set-output name=eth_rinkeby_market_contract_address::$ethRinkebyMarketContractAddress"
       - name: Send test message
         uses: appleboy/telegram-action@master
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            Cruzo smart contracts have been deployed.
+            *EthRinkeby*
+            Token: ---
+            Market: ${{ steps.parse-contract-addresses.outputs.eth_rinkeby_market_contract_address }}
