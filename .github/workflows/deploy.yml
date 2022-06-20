@@ -8,7 +8,7 @@ on:
         type: string
 
 jobs:
-  compile:
+  deploy:
     runs-on: ubuntu-latest
     env:
       PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
@@ -20,21 +20,9 @@ jobs:
         run: yarn
       - name: Compile
         run: yarn compile
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: compiled
-          path: data/artifacts
-  deploy:
-    runs-on: ubuntu-latest
-    env:
-      PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
-      MARKET_SERVICE_FEE: ${{ secrets.MARKET_SERVICE_FEE }}
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: compiled
       - name: Deploy to Rinkeby network
-        run: yarn deploy --network ethRinkeby
         if: ${{ inputs.environment == 'testnet' }}
+        run: yarn deploy --network ethRinkeby
+      - name: Deploy to Rinkeby network
+        if: ${{ inputs.environment == 'mainnet' }}
+        run: yarn deploy --network ethMainnet
