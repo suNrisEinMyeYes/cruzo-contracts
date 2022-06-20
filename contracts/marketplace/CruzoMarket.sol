@@ -26,6 +26,13 @@ contract CruzoMarket is ERC1155Holder, Ownable, ReentrancyGuard {
 
     event TradeClosed(address tokenAddress, uint256 tokenId, address seller);
 
+    event TradePriceChanged(
+        address tokenAddress,
+        uint256 tokenId,
+        address seller,
+        uint256 price
+    );
+
     event WithdrawalCompleted(address beneficiaryAddress, uint256 _amount);
 
     struct Trade {
@@ -138,5 +145,16 @@ contract CruzoMarket is ERC1155Holder, Ownable, ReentrancyGuard {
     {
         Address.sendValue(payable(_beneficiaryAddress), _amount);
         emit WithdrawalCompleted(_beneficiaryAddress, _amount);
+    }
+
+    function changePrice(
+        address _tokenAddress,
+        uint256 _tokenId,
+        uint256 _newPrice
+    ) external nonReentrant {
+        Trade storage trade = trades[_tokenAddress][_tokenId][msg.sender];
+        require(trade.amount > 0, "Trade is not open");
+        trade.price = _newPrice;
+        emit TradePriceChanged(_tokenAddress, _tokenId, msg.sender, _newPrice);
     }
 }

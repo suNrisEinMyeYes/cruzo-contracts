@@ -134,6 +134,37 @@
       {
         "indexed": false,
         "internalType": "address",
+        "name": "tokenAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tokenId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "seller",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "price",
+        "type": "uint256"
+      }
+    ],
+    "name": "TradePriceChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
         "name": "beneficiaryAddress",
         "type": "address"
       },
@@ -146,6 +177,29 @@
     ],
     "name": "WithdrawalCompleted",
     "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_tokenAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_tokenId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_newPrice",
+        "type": "uint256"
+      }
+    ],
+    "name": "changePrice",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   },
   {
     "inputs": [

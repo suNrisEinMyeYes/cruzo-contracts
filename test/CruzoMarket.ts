@@ -467,4 +467,44 @@ describe("CruzoMarket", () => {
       );
     });
   });
+
+  describe("changePrice", () => {
+    it("Should Change Trade Price", async () => {
+      const tokenId = ethers.BigNumber.from("1");
+      const supply = ethers.BigNumber.from("100");
+      const tradeAmount = ethers.BigNumber.from("10");
+      const price = ethers.utils.parseEther("0.01");
+      const newPrice = ethers.utils.parseEther("1");
+
+      expect(
+        await token.connect(seller).create(supply, seller.address, "", [])
+      );
+
+      expect(
+        await market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
+      );
+
+      let trade = await market.trades(token.address, tokenId, seller.address);
+      expect(trade.price).eq(price);
+
+      await expect(
+        market.connect(seller).changePrice(token.address, tokenId, newPrice)
+      )
+        .emit(market, "TradePriceChanged")
+        .withArgs(token.address, tokenId, seller.address, newPrice);
+
+      trade = await market.trades(token.address, tokenId, seller.address);
+      expect(trade.price).eq(newPrice);
+    });
+
+    it("Trade is not open", async () => {
+      await expect(
+        market
+          .connect(seller)
+          .changePrice(token.address, "1", ethers.utils.parseEther("1"))
+      ).revertedWith("Trade is not open");
+    });
+  });
 });
