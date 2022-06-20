@@ -29,9 +29,8 @@ jobs:
       - name: Parse contract addresses
         id: parse-contract-addresses
         run: |
-          cat deploy_output.log
-          ethRinkebyTokenAddress=$(cat deploy.log | sed -n 's/Token Contract Address : \(.*\)/\1/p')
-          ethRinkebyMarketAddress=$(cat deploy.log | sed -n 's/Market Contract Address : \(.*\)/\1/p')
+          ethRinkebyTokenAddress=$(cat deploy_output.log | sed -n 's/Token Contract Address : \(.*\)/\1/p')
+          ethRinkebyMarketAddress=$(cat deploy_output.log | sed -n 's/Market Contract Address : \(.*\)/\1/p')
           echo "::set-output name=eth_rinkeby_token_address::$ethRinkebyTokenAddress"
           echo "::set-output name=eth_rinkeby_market_address::$ethRinkebyMarketAddress"
       - name: Report contract addresses
@@ -42,6 +41,6 @@ jobs:
           message: |
             🚀 Cruzo smart contracts have been deployed successfully.
             *EthRinkeby*
-            Token: ${{ steps.parse-contract-addresses.outputs.eth_rinkeby_token_address }}
-            Market: ${{ steps.parse-contract-addresses.outputs.eth_rinkeby_market_address }}
+            Token: `${{ steps.parse-contract-addresses.outputs.eth_rinkeby_token_address }}`
+            Market: `${{ steps.parse-contract-addresses.outputs.eth_rinkeby_market_address }}`
           format: markdown
