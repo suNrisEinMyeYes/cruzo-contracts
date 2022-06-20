@@ -23,6 +23,6 @@ jobs:
       - name: Deploy to Rinkeby network
         if: ${{ inputs.environment == 'testnet' }}
         run: yarn deploy --network ethRinkeby
-      - name: Deploy to Rinkeby network
+      - name: Deploy to Mainnet network
         if: ${{ inputs.environment == 'mainnet' }}
         run: yarn deploy --network ethMainnet

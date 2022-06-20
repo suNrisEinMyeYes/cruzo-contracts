@@ -13,6 +13,7 @@ jobs:
   deploy:
     name: Deploy contracts
     uses: ./.github/workflows/deploy.yml
+    needs: test
     secrets: inherit
     with:
       environment: testnet
