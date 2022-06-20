@@ -27,6 +27,16 @@ const config: HardhatUserConfig = {
     },
   },
   networks: {
+    ethMainnet: {
+      url: "https://mainnet.infura.io/v3/2439f263ff0c4b29bfa0cf70da744d46",
+      chainId: 1,
+      accounts: PKS,
+    },
+    ethRinkeby: {
+      url: "https://rinkeby.infura.io/v3/2439f263ff0c4b29bfa0cf70da744d46",
+      chainId: 4,
+      accounts: PKS,
+    },
     bscTestnet: {
       url: "https://data-seed-prebsc-1-s1.binance.org:8545",
       chainId: 97,

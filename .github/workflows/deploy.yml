@@ -1,0 +1,46 @@
+name: Deploy
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+      MARKET_SERVICE_FEE: ${{ secrets.MARKET_SERVICE_FEE }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Install modules
+        run: yarn
+      - name: Compile
+        run: yarn compile
+      - name: Deploy to Rinkeby network
+        if: ${{ inputs.environment == 'testnet' }}
+        run: yarn deploy --network ethRinkeby | tee deploy_output.log
+      - name: Deploy to Mainnet network
+        if: ${{ inputs.environment == 'mainnet' }}
+        run: yarn deploy --network ethMainnet
+      - name: Parse contract addresses
+        id: parse-contract-addresses
+        run: |
+          ethRinkebyTokenAddress=$(cat deploy_output.log | sed -n 's/Token Contract Address : \(.*\)/\1/p')
+          ethRinkebyMarketAddress=$(cat deploy_output.log | sed -n 's/Market Contract Address : \(.*\)/\1/p')
+          echo "::set-output name=eth_rinkeby_token_address::$ethRinkebyTokenAddress"
+          echo "::set-output name=eth_rinkeby_market_address::$ethRinkebyMarketAddress"
+      - name: Report contract addresses
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            🚀 Cruzo smart contracts have been deployed successfully.
+            *Ethereum Rinkeby*
+            Token: `${{ steps.parse-contract-addresses.outputs.eth_rinkeby_token_address }}`
+            Market: `${{ steps.parse-contract-addresses.outputs.eth_rinkeby_market_address }}`
+          format: markdown

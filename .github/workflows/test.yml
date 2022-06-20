@@ -1,12 +1,7 @@
-name: CI
+name: Test
 
 on:
-  push:
-    branches:
-      - develop
-  pull_request:
-    branches:
-      - develop
+  workflow_call:
 
 jobs:
   test:
@@ -15,7 +10,8 @@ jobs:
       PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
       MARKET_SERVICE_FEE: ${{ secrets.MARKET_SERVICE_FEE }}
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
       - name: Install modules
         run: yarn
       - name: Generate typings
