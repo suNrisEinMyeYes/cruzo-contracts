@@ -40,7 +40,7 @@ jobs:
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: |
             🚀 Cruzo smart contracts have been deployed successfully.
-            *EthRinkeby*
+            *Ethereum Rinkeby*
             Token: `${{ steps.parse-contract-addresses.outputs.eth_rinkeby_token_address }}`
             Market: `${{ steps.parse-contract-addresses.outputs.eth_rinkeby_market_address }}`
           format: markdown
