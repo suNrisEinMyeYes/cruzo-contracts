@@ -39,7 +39,7 @@ describe("Testing CruzoMarket Contract", () => {
   });
 
   it("Should Open Trade", async () => {
-    await token.create(25, admin.address,"", []);
+    await token.create(25, admin.address, "", []);
     expect(await market.openTrade(token.address, 1, 1, "10000000000", []));
     await expect(market.openTrade(token.address, 1, 1, "10000000000", [])).to.be.revertedWith("already in trades")
     expect(await token.balanceOf(admin.address, 1)).eq(24);
@@ -47,17 +47,25 @@ describe("Testing CruzoMarket Contract", () => {
     expect(await market.cancelTrade(0, []));
   });
 
-  it("Should execute trade", async () => {
-    await token.create(3, admin.address,"", []);
+  it("Should buy item", async () => {
+    await token.create(3, admin.address, "", []);
     expect(await market.openTrade(token.address, 1, 1, ethers.utils.parseEther("1.0"), []));
-    expect(await market.connect(signers[1]).executeTrade(0, [], { value: ethers.utils.parseEther("1.0") }));
+    expect(await market.connect(signers[1]).buyItem(0, [], { value: ethers.utils.parseEther("1.0") }));
     expect(await market.openTrade(token.address, 1, 1, ethers.utils.parseEther("1.0"), []));
     expect(await token.balanceOf(market.address, 1)).eq(1);
     expect(await token.balanceOf(signers[1].address, 1)).eq(1);
   });
+  it("Should make a gift", async () => {
+    await token.create(3, admin.address, "", []);
+    expect(await market.openTrade(token.address, 1, 1, ethers.utils.parseEther("1.0"), []));
+    expect(await market.connect(signers[1]).giftItem(0, [], signers[2].address, { value: ethers.utils.parseEther("1.0") }));
+    expect(await market.openTrade(token.address, 1, 1, ethers.utils.parseEther("1.0"), []));
+    expect(await token.balanceOf(market.address, 1)).eq(1);
+    expect(await token.balanceOf(signers[2].address, 1)).eq(1);
+  });
 
   it("Should cancel trade", async () => {
-    await token.create(1, admin.address,"", []);
+    await token.create(1, admin.address, "", []);
     expect(await market.openTrade(token.address, 1, 1, ethers.utils.parseEther("1.0"), []));
     expect(market.cancelTrade(0, []));
     expect(await market.openTrade(token.address, 1, 1, ethers.utils.parseEther("1.0"), []));
@@ -65,7 +73,7 @@ describe("Testing CruzoMarket Contract", () => {
   });
 
   it("Should get all on trade", async () => {
-    await token.create(1, admin.address,"", []);
+    await token.create(1, admin.address, "", []);
     expect(await market.openTrade(token.address, 1, 1, ethers.utils.parseEther("1.0"), []));
     const allTrades = await market.getAllOnSale();
     expect(allTrades.length).eq(1);
