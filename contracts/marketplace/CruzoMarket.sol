@@ -21,7 +21,8 @@ contract CruzoMarket is ERC1155Holder, Ownable, ReentrancyGuard {
         uint256 tokenId,
         address seller,
         address buyer,
-        uint256 amount
+        uint256 amount,
+        address addressat
     );
 
     event TradeClosed(address tokenAddress, uint256 tokenId, address seller);
@@ -101,7 +102,7 @@ contract CruzoMarket is ERC1155Holder, Ownable, ReentrancyGuard {
             payable(_seller),
             (value * (10000 - uint256(serviceFee))) / 10000
         );
-        emit TradeExecuted(_tokenAddress, _tokenId, _seller, msg.sender, _amount);
+        emit TradeExecuted(_tokenAddress, _tokenId, _seller, msg.sender, _amount, _to);
     }
 
     function buyItem(
