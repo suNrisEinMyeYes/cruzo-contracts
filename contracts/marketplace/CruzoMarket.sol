@@ -21,7 +21,8 @@ contract CruzoMarket is ERC1155Holder, Ownable, ReentrancyGuard {
         uint256 tokenId,
         address seller,
         address buyer,
-        uint256 amount
+        uint256 amount,
+        address addressee
     );
 
     event TradeClosed(address tokenAddress, uint256 tokenId, address seller);
@@ -76,42 +77,62 @@ contract CruzoMarket is ERC1155Holder, Ownable, ReentrancyGuard {
         emit TradeOpened(_tokenAddress, _tokenId, msg.sender, _amount, _price);
     }
 
-    function executeTrade(
+    function _executeTrade(
         address _tokenAddress,
         uint256 _tokenId,
         address _seller,
-        uint256 _amount
-    ) external payable nonReentrant {
-        require(
-            msg.sender != _seller,
-            "Trade cannot be executed by the seller"
-        );
+        uint256 _amount,
+        address _to,
+        uint256 value
+    ) internal nonReentrant {
+        require(msg.sender != _seller, "Trade cannot be executed by the seller");
         Trade storage trade = trades[_tokenAddress][_tokenId][_seller];
         require(_amount > 0, "Amount must be greater than 0");
         require(trade.amount >= _amount, "Not enough items in trade");
-        require(
-            msg.value == trade.price * _amount,
-            "Ether value sent is incorrect"
-        );
+        require(value == trade.price * _amount, "Ether value sent is incorrect");
         trade.amount -= _amount;
         IERC1155(_tokenAddress).safeTransferFrom(
             address(this),
-            msg.sender,
+            _to,
             _tokenId,
             _amount,
             ""
         );
         Address.sendValue(
             payable(_seller),
-            (msg.value * (10000 - uint256(serviceFee))) / 10000
+            (value * (10000 - uint256(serviceFee))) / 10000
         );
-        emit TradeExecuted(
+        emit TradeExecuted(_tokenAddress, _tokenId, _seller, msg.sender, _amount, _to);
+    }
+
+    function buyItem(
+        address _tokenAddress,
+        uint256 _tokenId,
+        address _seller,
+        uint256 _amount
+    ) external payable {
+        _executeTrade(
             _tokenAddress,
             _tokenId,
             _seller,
+            _amount,
             msg.sender,
-            _amount
+            msg.value
         );
+    }
+
+    function giftItem(
+        address _tokenAddress,
+        uint256 _tokenId,
+        address _seller,
+        uint256 _amount,
+        address _to
+    ) external payable {
+        require(msg.sender != _to, "useless operation");
+        require(_to != address(0), "trying to send gift to 0 address");
+        require(_to != address(this), "trying to send gift to market");
+
+        _executeTrade(_tokenAddress, _tokenId, _seller, _amount, _to, msg.value);
     }
 
     function closeTrade(address _tokenAddress, uint256 _tokenId)
