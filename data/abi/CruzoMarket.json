@@ -86,6 +86,12 @@
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "addressee",
+        "type": "address"
       }
     ],
     "name": "TradeExecuted",

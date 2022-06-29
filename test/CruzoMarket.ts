@@ -184,7 +184,8 @@ describe("CruzoMarket", () => {
           tokenId,
           seller.address,
           buyer.address,
-          purchaseAmount
+          purchaseAmount,
+          buyer.address
         );
 
       expect(await token.balanceOf(buyer.address, tokenId)).eq(purchaseAmount);
@@ -244,7 +245,9 @@ describe("CruzoMarket", () => {
           tokenId,
           seller.address,
           buyer.address,
-          purchaseAmount
+          purchaseAmount,
+          addresat.address
+
         );
 
       expect(await token.balanceOf(addresat.address, tokenId)).eq(purchaseAmount);
