@@ -1,14 +1,10 @@
 import { ethers } from "hardhat";
 import { Cruzo1155 } from "../typechain/Cruzo1155";
 import { CruzoMarket } from "../typechain/CruzoMarket";
-import * as dotenv from "dotenv";
-dotenv.config();
-
 
 async function main() {
   console.log("Deploying market contract");
-  const defaultFee = "5";
-  const marketServiceFee = parseInt(process.env.MARKET_SERVICE_FEE || defaultFee);
+  const marketServiceFee = parseInt(process.env.MARKET_SERVICE_FEE || "");
   const Market = await ethers.getContractFactory("CruzoMarket");
   const market = (await Market.deploy(marketServiceFee)) as CruzoMarket;
 
