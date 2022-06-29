@@ -7,7 +7,8 @@ dotenv.config();
 
 async function main() {
   console.log("Deploying market contract");
-  const marketServiceFee = parseInt(process.env.MARKET_SERVICE_FEE || "");
+  const defaultFee = "5";
+  const marketServiceFee = parseInt(process.env.MARKET_SERVICE_FEE || defaultFee);
   const Market = await ethers.getContractFactory("CruzoMarket");
   const market = (await Market.deploy(marketServiceFee)) as CruzoMarket;
 
