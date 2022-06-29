@@ -1,6 +1,9 @@
 import { ethers } from "hardhat";
 import { Cruzo1155 } from "../typechain/Cruzo1155";
 import { CruzoMarket } from "../typechain/CruzoMarket";
+import * as dotenv from "dotenv";
+dotenv.config();
+
 
 async function main() {
   console.log("Deploying market contract");
