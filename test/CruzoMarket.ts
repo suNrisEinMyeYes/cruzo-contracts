@@ -12,7 +12,7 @@ describe("CruzoMarket", () => {
   let owner: SignerWithAddress;
   let seller: SignerWithAddress;
   let buyer: SignerWithAddress;
-  let addresat: SignerWithAddress;
+  let addressee: SignerWithAddress;
   const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
 
 
@@ -20,7 +20,7 @@ describe("CruzoMarket", () => {
   const serviceFeeBase = 10000;
 
   beforeEach(async () => {
-    [owner, seller, buyer, addresat] = await ethers.getSigners();
+    [owner, seller, buyer, addressee] = await ethers.getSigners();
 
     const CruzoMarket = await ethers.getContractFactory("CruzoMarket");
     const Cruzo1155 = await ethers.getContractFactory("Cruzo1155");
@@ -221,7 +221,7 @@ describe("CruzoMarket", () => {
           .openTrade(token.address, tokenId, tradeAmount, price)
       );
 
-      expect(await token.balanceOf(addresat.address, tokenId)).eq(0);
+      expect(await token.balanceOf(addressee.address, tokenId)).eq(0);
 
       const sellerBalance = await ethers.provider.getBalance(seller.address);
 
@@ -233,7 +233,7 @@ describe("CruzoMarket", () => {
             tokenId,
             seller.address,
             purchaseAmount,
-            addresat.address,
+            addressee.address,
             {
               value: purchaseValue,
             }
@@ -246,11 +246,11 @@ describe("CruzoMarket", () => {
           seller.address,
           buyer.address,
           purchaseAmount,
-          addresat.address
+          addressee.address
 
         );
 
-      expect(await token.balanceOf(addresat.address, tokenId)).eq(purchaseAmount);
+      expect(await token.balanceOf(addressee.address, tokenId)).eq(purchaseAmount);
       expect(await token.balanceOf(market.address, tokenId)).eq(
         tradeAmount.sub(purchaseAmount)
       );
