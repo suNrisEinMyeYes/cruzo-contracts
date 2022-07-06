@@ -1,12 +1,25 @@
-import { ethers } from "hardhat";
+import { ethers, upgrades } from "hardhat";
 import { Cruzo1155 } from "../typechain/Cruzo1155";
 import { CruzoMarket } from "../typechain/CruzoMarket";
+
 
 async function main() {
   console.log("Deploying market contract");
   const marketServiceFee = parseInt(process.env.MARKET_SERVICE_FEE || "");
   const Market = await ethers.getContractFactory("CruzoMarket");
-  const market = (await Market.deploy(marketServiceFee)) as CruzoMarket;
+
+  //(await Market.deploy(marketServiceFee)) as CruzoMarket;
+
+  const market = await upgrades.deployProxy(
+    Market,
+    [
+      marketServiceFee
+    ],
+    {
+      kind: "uups",
+    }
+  );
+  await market.deployed();
 
   console.log("Market Contract Deployed");
   console.log("Market Contract Address : ", market.address);
@@ -15,6 +28,8 @@ async function main() {
 
   console.log("Deploying token contract");
   const Token = await ethers.getContractFactory("Cruzo1155");
+
+
   const token = (await Token.deploy(
     "https://cruzo.market",
     market.address

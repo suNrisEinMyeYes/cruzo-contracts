@@ -1,12 +1,12 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
-import { ethers } from "hardhat";
+import { ethers, upgrades } from "hardhat";
 import { Cruzo1155 } from "../typechain/Cruzo1155";
 import { CruzoMarket } from "../typechain/CruzoMarket";
-import { BigNumberish } from "ethers";
+import { BigNumberish, Contract } from "ethers";
 
 describe("CruzoMarket", () => {
-  let market: CruzoMarket;
+  let market: Contract;
   let token: Cruzo1155;
 
   let owner: SignerWithAddress;
@@ -19,14 +19,26 @@ describe("CruzoMarket", () => {
   const serviceFee = 300;
   const serviceFeeBase = 10000;
 
+
   beforeEach(async () => {
     [owner, seller, buyer, addressee] = await ethers.getSigners();
 
     const CruzoMarket = await ethers.getContractFactory("CruzoMarket");
     const Cruzo1155 = await ethers.getContractFactory("Cruzo1155");
 
-    market = await CruzoMarket.deploy(serviceFee);
+
+    market = await upgrades.deployProxy(
+      CruzoMarket,
+      [
+        serviceFee
+      ],
+      {
+        kind: "uups",
+      }
+    )
     await market.deployed();
+
+
 
     token = await Cruzo1155.deploy("baseURI", market.address);
     await token.deployed();
@@ -518,7 +530,7 @@ describe("CruzoMarket", () => {
         market
           .connect(owner)
           .withdraw(owner.address, serviceFeeValue)
-          .then(async (tx) => {
+          .then(async (tx: { wait: () => any; }) => {
             const receipt = await tx.wait();
             txUsedGasPrice = receipt.effectiveGasPrice.mul(receipt.gasUsed);
             return tx;
@@ -571,6 +583,40 @@ describe("CruzoMarket", () => {
           .connect(seller)
           .changePrice(token.address, "1", ethers.utils.parseEther("1"))
       ).revertedWith("Trade is not open");
+    });
+  });
+  describe("Proxy upgrade", () => {
+    it("Change implementation", async () => {
+      const tokenId = ethers.BigNumber.from("1");
+      const supply = ethers.BigNumber.from("100");
+      const tradeAmount = ethers.BigNumber.from("10");
+      const price = ethers.utils.parseEther("0.01");
+      const newPrice = ethers.utils.parseEther("1");
+      const newContractFactory = await ethers.getContractFactory("CruzoMarket");
+
+      market = await upgrades.upgradeProxy(market.address, newContractFactory);
+
+      expect(
+        await token.connect(seller).create(supply, seller.address, "", [])
+      );
+
+      expect(
+        await market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
+      );
+
+      let trade = await market.trades(token.address, tokenId, seller.address);
+      expect(trade.price).eq(price);
+
+      await expect(
+        market.connect(seller).changePrice(token.address, tokenId, newPrice)
+      )
+        .emit(market, "TradePriceChanged")
+        .withArgs(token.address, tokenId, seller.address, newPrice);
+
+      trade = await market.trades(token.address, tokenId, seller.address);
+      expect(trade.price).eq(newPrice);
     });
   });
 });

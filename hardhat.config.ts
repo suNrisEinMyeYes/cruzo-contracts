@@ -4,6 +4,7 @@ import "@typechain/hardhat";
 import "@nomiclabs/hardhat-etherscan";
 import "hardhat-abi-exporter";
 import "hardhat-gas-reporter";
+import '@openzeppelin/hardhat-upgrades';
 import { task, HardhatUserConfig } from "hardhat/config";
 import * as dotenv from "dotenv";
 
