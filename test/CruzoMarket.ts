@@ -52,7 +52,7 @@ describe("CruzoMarket", () => {
       const price = ethers.utils.parseEther("0.01");
 
       expect(
-        await token.connect(seller).create(supply, seller.address, "", [])
+        await token.connect(seller).create(tokenId, supply, seller.address, "", [])
       );
 
       await expect(
@@ -80,7 +80,7 @@ describe("CruzoMarket", () => {
       const price = ethers.utils.parseEther("0.01");
 
       expect(
-        await token.connect(seller).create(supply, seller.address, "", [])
+        await token.connect(seller).create(tokenId, supply, seller.address, "", [])
       );
 
       await expect(
@@ -97,7 +97,7 @@ describe("CruzoMarket", () => {
       const price = ethers.utils.parseEther("0.01");
 
       expect(
-        await token.connect(seller).create(supply, seller.address, "", [])
+        await token.connect(seller).create(tokenId, supply, seller.address, "", [])
       );
 
       expect(
@@ -120,7 +120,7 @@ describe("CruzoMarket", () => {
       const price = ethers.utils.parseEther("0.01");
 
       expect(
-        await token.connect(seller).create(supply, seller.address, "", [])
+        await token.connect(seller).create(tokenId, supply, seller.address, "", [])
       );
 
       expect(
@@ -141,7 +141,7 @@ describe("CruzoMarket", () => {
       const price = ethers.utils.parseEther("0.01");
 
       expect(
-        await token.connect(seller).create(supply, seller.address, "", [])
+        await token.connect(seller).create(tokenId, supply, seller.address, "", [])
       );
 
       await expect(
@@ -164,7 +164,7 @@ describe("CruzoMarket", () => {
       const serviceFeeValue = purchaseValue.mul(serviceFee).div(serviceFeeBase);
 
       expect(
-        await token.connect(seller).create(supply, seller.address, "", [])
+        await token.connect(seller).create(tokenId, supply, seller.address, "", [])
       );
 
       expect(
@@ -224,7 +224,7 @@ describe("CruzoMarket", () => {
       const serviceFeeValue = purchaseValue.mul(serviceFee).div(serviceFeeBase);
 
       expect(
-        await token.connect(seller).create(supply, seller.address, "", [])
+        await token.connect(seller).create(tokenId, supply, seller.address, "", [])
       );
 
       expect(
@@ -283,7 +283,7 @@ describe("CruzoMarket", () => {
       const price = ethers.utils.parseEther("0.01");
 
       expect(
-        await token.connect(seller).create(supply, seller.address, "", [])
+        await token.connect(seller).create(tokenId, supply, seller.address, "", [])
       );
 
       expect(
@@ -306,7 +306,7 @@ describe("CruzoMarket", () => {
       const price = ethers.utils.parseEther("0.01");
 
       expect(
-        await token.connect(seller).create(supply, seller.address, "", [])
+        await token.connect(seller).create(tokenId, supply, seller.address, "", [])
       );
 
       expect(
@@ -329,7 +329,7 @@ describe("CruzoMarket", () => {
       const price = ethers.utils.parseEther("0.01");
 
       expect(
-        await token.connect(seller).create(supply, seller.address, "", [])
+        await token.connect(seller).create(tokenId, supply, seller.address, "", [])
       );
 
       expect(
@@ -357,7 +357,7 @@ describe("CruzoMarket", () => {
       const price = ethers.utils.parseEther("0.01");
 
       expect(
-        await token.connect(seller).create(supply, seller.address, "", [])
+        await token.connect(seller).create(tokenId, supply, seller.address, "", [])
       );
 
       expect(
@@ -393,7 +393,7 @@ describe("CruzoMarket", () => {
       expect(
         await token
           .connect(seller)
-          .create(supply, contractSeller.address, "", [])
+          .create(tokenId, supply, contractSeller.address, "", [])
       );
 
       expect(await contractSeller.openTrade(tokenId, tradeAmount, price));
@@ -422,7 +422,7 @@ describe("CruzoMarket", () => {
       const price = ethers.utils.parseEther("0.01");
 
       expect(
-        await token.connect(seller).create(supply, seller.address, "", [])
+        await token.connect(seller).create(tokenId, supply, seller.address, "", [])
       );
 
       expect(
@@ -498,7 +498,7 @@ describe("CruzoMarket", () => {
       const ownerBalance = await ethers.provider.getBalance(owner.address);
 
       expect(
-        await token.connect(seller).create(supply, seller.address, "", [])
+        await token.connect(seller).create(tokenId, supply, seller.address, "", [])
       );
 
       expect(
@@ -555,7 +555,7 @@ describe("CruzoMarket", () => {
       const newPrice = ethers.utils.parseEther("1");
 
       expect(
-        await token.connect(seller).create(supply, seller.address, "", [])
+        await token.connect(seller).create(tokenId, supply, seller.address, "", [])
       );
 
       expect(
@@ -593,12 +593,13 @@ describe("CruzoMarket", () => {
       const price = ethers.utils.parseEther("0.01");
       const newPrice = ethers.utils.parseEther("1");
       const newContractFactory = await ethers.getContractFactory("CruzoMarket");
+      expect(
+        await token.connect(seller).create(tokenId, supply, seller.address, "", [])
+      );
 
       market = await upgrades.upgradeProxy(market.address, newContractFactory);
 
-      expect(
-        await token.connect(seller).create(supply, seller.address, "", [])
-      );
+
 
       expect(
         await market
