@@ -525,6 +525,19 @@
   {
     "inputs": [
       {
+        "internalType": "uint16",
+        "name": "_serviceFee",
+        "type": "uint16"
+      }
+    ],
+    "name": "test",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "",
         "type": "address"
