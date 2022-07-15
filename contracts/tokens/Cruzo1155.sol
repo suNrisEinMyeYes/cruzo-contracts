@@ -9,10 +9,6 @@ contract Cruzo1155 is ERC1155URI {
     string public name;
     string public symbol;
 
-    mapping (uint256 => address) private tokenIdToCreator;
-
-    uint256 private lastCreated;
-
     constructor(string memory _baseMetadataURI, address _marketAddress)
         ERC1155(_baseMetadataURI)
     {
@@ -22,15 +18,11 @@ contract Cruzo1155 is ERC1155URI {
         _setBaseURI(_baseMetadataURI);
     }
 
-    /**
-     *
-     * @notice This function return totalNumber of unique tokentypes
-     * @dev This will only return the total number of individual unique tokentypes only
-     * @dev It will not return total inluding suppply of fungible tokens
-     *
-     */
-    function total() public view onlyOwner returns (uint256) {
-        return lastCreated;
+    
+    
+
+    function setMarketAddress(address _new) public onlyOwner{
+        marketAddress = _new;
     }
 
     /**
@@ -75,7 +67,7 @@ contract Cruzo1155 is ERC1155URI {
         if (bytes(_uri).length > 0) {
             _setTokenURI(_tokenId, _uri);
         }
-        tokenIdToCreator[_tokenId] = _msgSender();
+        creators[_tokenId] = _msgSender();
 
         return _mintToken(_tokenId, _amount, _to, _data);
     }
@@ -95,7 +87,6 @@ contract Cruzo1155 is ERC1155URI {
         string memory _uri,
         bytes memory _data
     ) public returns (uint256) {
-        lastCreated = _tokenId;
         
         return _createToken(_tokenId, _amount, _to, _uri, _data);
     }
@@ -116,7 +107,7 @@ contract Cruzo1155 is ERC1155URI {
         bytes memory _data
     ) public onlyCreator(_tokenId) returns (uint256) {
         require(
-            tokenIdToCreator[_tokenId] != address(0),
+            creators[_tokenId] != address(0),
             "token doesn't exist; try using `mintNewTo()`"
         );
         return _mintToken(_tokenId, _amount, _to, _data);
@@ -133,12 +124,12 @@ contract Cruzo1155 is ERC1155URI {
     }
 
     function uri(uint256 id) public view override returns (string memory) {
-        require(tokenIdToCreator[id] != address(0), "Cruzo1155:non existent tokenId");
+        require(creators[id] != address(0), "Cruzo1155:non existent tokenId");
         return _tokenURI(id);
     }
 
     function setTokenURI(uint256 _id, string memory _uri) public {
-        require(tokenIdToCreator[_id] != address(0), "Cruzo1155:non existent tokenId");
+        require(creators[_id] != address(0), "Cruzo1155:non existent tokenId");
         _setTokenURI(_id, _uri);
     }
 

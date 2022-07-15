@@ -41,7 +41,6 @@ describe("Testing Cruzo1155 Contract", () => {
     expect(await token.baseURI()).equal(tokenDetails.baseOnlyURI);
     await token.create(1, 1, admin.address, tokenDetails.ipfsHash, []);
     expect(await token.uri(1)).equal("ipfs://" + tokenDetails.ipfsHash);
-    expect(await token.total()).equal(1);
   });
 
   it("Should update baseURI", async () => {
