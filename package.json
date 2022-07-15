@@ -40,10 +40,12 @@
     "compile": "npx hardhat compile",
     "typegen": "npx hardhat typechain",
     "deploy": "npx hardhat run scripts/deploy.ts",
+    "upgradeMarket": "npx hardhat run scripts/upgradeMarket.ts",
     "abi": "npx hardhat export-abi",
     "test": "npx hardhat test",
     "lint": "npx prettier --write 'contracts/**/*.sol' && npx solhint --fix 'contracts/**/*.sol'",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "console": "npx hardhat console"
   },
   "lint-staged": {
     "contracts/**/*.sol": "yarn lint"
