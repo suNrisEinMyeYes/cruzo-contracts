@@ -16,7 +16,7 @@ task("accounts", "Prints the list of accounts", async (args, hre) => {
 });
 
 dotenv.config();
-const PKS = process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [];
+const PKS = [process.env.PRIVATE_KEY!];
 const config: HardhatUserConfig = {
   solidity: {
     version: "0.8.7",
