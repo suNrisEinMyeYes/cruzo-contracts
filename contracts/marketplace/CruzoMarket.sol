@@ -227,12 +227,4 @@ contract CruzoMarket is
             _newPrice
         );
     }
-
-    function test(uint16 _serviceFee) public onlyOwner {
-        require(
-            _serviceFee <= 10000,
-            "Service fee can not exceed 10,000 basis points"
-        );
-        serviceFee = _serviceFee;
-    }
 }

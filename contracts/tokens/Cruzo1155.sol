@@ -18,10 +18,7 @@ contract Cruzo1155 is ERC1155URI {
         _setBaseURI(_baseMetadataURI);
     }
 
-    
-    
-
-    function setMarketAddress(address _new) public onlyOwner{
+    function setMarketAddress(address _new) public onlyOwner {
         marketAddress = _new;
     }
 
@@ -85,7 +82,6 @@ contract Cruzo1155 is ERC1155URI {
         string memory _uri,
         bytes memory _data
     ) public returns (uint256) {
-        
         return _createToken(_tokenId, _amount, _to, _uri, _data);
     }
 
