@@ -6,5 +6,9 @@
   "97": {
     "token": "0x4cD75fb787c8Cd07295D7cfFB01729ff842D40FA",
     "market": "0x9319284850E751ab999D462CF1aF6F503B7c4981"
+  },
+  "1029": {
+    "token": "0xB8ee29D50543Ebafaa6eb3233812Db19B2c2F668",
+    "market": "0xb9BEd77f80171256768553a4bC4cBceE90ffc904"
   }
 }
