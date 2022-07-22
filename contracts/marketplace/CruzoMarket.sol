@@ -1,77 +1,104 @@
-//SPDX-License-Identifier: un-licensed
+//SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
-import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
-import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155HolderUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 
-contract CruzoMarket is ERC1155Holder, Ownable {
-    event TradeStatusChange(uint256 indexed itemId, bytes32 status);
-    event PriceChange(uint256 oldPrice, uint256 newPrice);
+contract CruzoMarket is
+    Initializable,
+    ContextUpgradeable,
+    UUPSUpgradeable,
+    ERC1155HolderUpgradeable,
+    OwnableUpgradeable,
+    ReentrancyGuardUpgradeable
+{
+    event TradeOpened(
+        address tokenAddress,
+        uint256 tokenId,
+        address seller,
+        uint256 amount,
+        uint256 price
+    );
+
+    event TradeExecuted(
+        address tokenAddress,
+        uint256 tokenId,
+        address seller,
+        address buyer,
+        uint256 amount,
+        address addressee
+    );
+
+    event TradeClosed(address tokenAddress, uint256 tokenId, address seller);
+
+    event TradePriceChanged(
+        address tokenAddress,
+        uint256 tokenId,
+        address seller,
+        uint256 price
+    );
+
+    event WithdrawalCompleted(address beneficiaryAddress, uint256 _amount);
 
     struct Trade {
-        address payable poster;
-        address tokenAddress;
-        uint256 itemId;
-        uint256 amount; // in  wei
-        uint256 price; // in  wei
-        bytes32 status; // e.g Open, Executed, Cancelled
+        uint256 amount;
+        uint256 price;
     }
 
-    mapping(uint256 => Trade) private trades;
+    // tokenAddress => tokenId => seller => trade
+    mapping(address => mapping(uint256 => mapping(address => Trade)))
+        public trades;
 
-    mapping(address => mapping(address => mapping(uint256 => bool))) ownerToTokenToItem;
+    // Service fee percentage in basis point (100bp = 1%)
+    uint16 public serviceFee;
 
-    uint256 private tradeCounter;
+    constructor() {}
 
-    // Get individual trade
-    function getTrade(uint256 _trade) public view returns (Trade memory) {
-        Trade memory trade = trades[_trade];
-        return trade;
+    function initialize(uint16 _serviceFee) public initializer {
+        __Ownable_init();
+        __UUPSUpgradeable_init();
+        __Context_init();
+        __ReentrancyGuard_init();
+        setServiceFee(_serviceFee);
     }
 
-    /* 
-    List item in the market place for sale
-    item unique id and amount of tokens to be put on sale price of item
-    and an additional data parameter if you dont wan to pass data set it to empty string 
-    if your sending the transaction through Frontend 
-    else if you are send the transaction using etherscan or using nodejs set it to 0x00 
-    */
+    function _authorizeUpgrade(address) internal override onlyOwner {}
 
     function openTrade(
         address _tokenAddress,
-        uint256 _itemId,
+        uint256 _tokenId,
         uint256 _amount,
-        uint256 _price,
-        bytes calldata data
-    ) public {
-        IERC1155 itemToken = IERC1155(_tokenAddress);
+        uint256 _price
+    ) external nonReentrant {
+        require(_amount > 0, "Amount must be greater than 0");
         require(
-            itemToken.balanceOf(msg.sender, _itemId) != 0,
-            "Error: Only owner can list"
+            trades[_tokenAddress][_tokenId][_msgSender()].amount == 0,
+            "Trade is already open"
         );
-
-        require(ownerToTokenToItem[msg.sender][_tokenAddress][_itemId] == false, "already in trades");
-        ownerToTokenToItem[msg.sender][_tokenAddress][_itemId] = true;
-        
-        itemToken.safeTransferFrom(
-            payable(msg.sender),
+        IERC1155Upgradeable(_tokenAddress).safeTransferFrom(
+            _msgSender(),
             address(this),
-            _itemId,
+            _tokenId,
             _amount,
-            data
+            ""
         );
-        trades[tradeCounter] = Trade({
-            tokenAddress: _tokenAddress,
-            poster: payable(msg.sender),
-            itemId: _itemId,
+        trades[_tokenAddress][_tokenId][_msgSender()] = Trade({
             amount: _amount,
-            price: _price,
-            status: "Open"
+            price: _price
         });
-
-        tradeCounter += 1;
-        emit TradeStatusChange(tradeCounter - 1, "Open");
+        emit TradeOpened(
+            _tokenAddress,
+            _tokenId,
+            _msgSender(),
+            _amount,
+            _price
+        );
     }
 
     /*
@@ -131,98 +158,90 @@ contract CruzoMarket is ERC1155Holder, Ownable {
 
     _executeTrade(_trade, data, msg.value, _to);
   }
-
-    /*
-    Seller can cancle trade by passing the trade number
-    and an additional data parameter if you dont wan to pass data set it to empty string 
-    if your sending the transaction through Frontend 
-    else if you are send the transaction using etherscan or using nodejs set it to 0x00 
-    */
-
-    function cancelTrade(uint256 _trade, bytes calldata data) public {
-        Trade memory trade = trades[_trade];
-        IERC1155 itemToken = IERC1155(trade.tokenAddress);
-        require(
-            msg.sender == trade.poster,
-            "Error: Trade can be cancelled only by poster"
+  
+    function buyItem(
+        address _tokenAddress,
+        uint256 _tokenId,
+        address _seller,
+        uint256 _amount
+    ) external payable {
+        _executeTrade(
+            _tokenAddress,
+            _tokenId,
+            _seller,
+            _amount,
+            _msgSender(),
+            msg.value
         );
-        require(trade.status == "Open", "Error: Trade is not Open");
-        itemToken.safeTransferFrom(
+    }
+
+    function giftItem(
+        address _tokenAddress,
+        uint256 _tokenId,
+        address _seller,
+        uint256 _amount,
+        address _to
+    ) external payable {
+        require(_msgSender() != _to, "useless operation");
+        require(_to != address(0), "trying to send gift to 0 address");
+        require(_to != address(this), "trying to send gift to market");
+
+        _executeTrade(
+            _tokenAddress,
+            _tokenId,
+            _seller,
+            _amount,
+            _to,
+            msg.value
+        );
+    }
+
+    function closeTrade(address _tokenAddress, uint256 _tokenId)
+        external
+        nonReentrant
+    {
+        Trade memory trade = trades[_tokenAddress][_tokenId][_msgSender()];
+        require(trade.amount > 0, "Trade is not open");
+        IERC1155Upgradeable(_tokenAddress).safeTransferFrom(
             address(this),
-            trade.poster,
-            trade.itemId,
+            _msgSender(),
+            _tokenId,
             trade.amount,
-            data
+            ""
         );
-        trades[_trade].status = "Cancelled";
-        ownerToTokenToItem[msg.sender][trade.tokenAddress][trade.itemId] = false;
-        emit TradeStatusChange(_trade, "Cancelled");
+        delete trades[_tokenAddress][_tokenId][_msgSender()];
+        emit TradeClosed(_tokenAddress, _tokenId, _msgSender());
     }
 
-    // Get all items which are on sale in the market place
-    function getAllOnSale() public view virtual returns (Trade[] memory) {
-        uint256 counter = 0;
-        uint256 itemCounter = 0;
-        for (uint256 i = 0; i < tradeCounter; i++) {
-            if (trades[i].status == "Open") {
-                counter++;
-            }
-        }
-
-        Trade[] memory tokensOnSale = new Trade[](counter);
-        if (counter != 0) {
-            for (uint256 i = 0; i < tradeCounter; i++) {
-                if (trades[i].status == "Open") {
-                    tokensOnSale[itemCounter] = trades[i];
-                    itemCounter++;
-                }
-            }
-        }
-
-        return tokensOnSale;
-    }
-
-    // get all items owned by a perticular address
-    function getAllByOwner(address owner) public view returns (Trade[] memory) {
-        uint256 counter = 0;
-        uint256 itemCounter = 0;
-        for (uint256 i = 0; i < tradeCounter; i++) {
-            if (trades[i].poster == owner) {
-                counter++;
-            }
-        }
-
-        Trade[] memory tokensByOwner = new Trade[](counter);
-        if (counter != 0) {
-            for (uint256 i = 0; i < tradeCounter; i++) {
-                if (trades[i].poster == owner) {
-                    tokensByOwner[itemCounter] = trades[i];
-                    itemCounter++;
-                }
-            }
-        }
-
-        return tokensByOwner;
-    }
-
-    /*
-    Seller can lowner the price of item by specifing trade number and new price
-    if he wants to increase the price of item, he can unlist the item and then specify a higher price
-    */
-    function lowerTokenPrice(uint256 _trade, uint256 newPrice) public {
+    function setServiceFee(uint16 _serviceFee) public onlyOwner {
         require(
-            msg.sender == trades[_trade].poster,
-            "Error: Price can only be set by poster"
+            _serviceFee <= 10000,
+            "Service fee can not exceed 10,000 basis points"
         );
+        serviceFee = _serviceFee;
+    }
 
-        require(trades[_trade].status == "Open", "Error: Trade is not Open");
+    function withdraw(address _beneficiaryAddress, uint256 _amount)
+        public
+        onlyOwner
+    {
+        AddressUpgradeable.sendValue(payable(_beneficiaryAddress), _amount);
+        emit WithdrawalCompleted(_beneficiaryAddress, _amount);
+    }
 
-        uint256 oldPrice = trades[_trade].price;
-        require(
-            newPrice < oldPrice,
-            "Error: please specify a price value less than the old price if you want to increase the price, cancel the trade and list again  with a higher price"
+    function changePrice(
+        address _tokenAddress,
+        uint256 _tokenId,
+        uint256 _newPrice
+    ) external nonReentrant {
+        Trade storage trade = trades[_tokenAddress][_tokenId][_msgSender()];
+        require(trade.amount > 0, "Trade is not open");
+        trade.price = _newPrice;
+        emit TradePriceChanged(
+            _tokenAddress,
+            _tokenId,
+            _msgSender(),
+            _newPrice
         );
-        trades[_trade].price = newPrice;
-        emit PriceChange(oldPrice, newPrice);
     }
 }

@@ -1,31 +1,82 @@
 # Cruzo Contracts
 
-## Tokens 
+## Contracts 
 - Cruzo1155
+- CruzoMarket
 
 ## Networks
-### Binance
-- bscTestnet
-- bscMainnet
-### Polygon
-- polygonMumbai
-- polygonMainnet
-### Cronos
-- cronosMainnetBeta
-- cronosTestnet
-### Avalanche
-- avaxMainnet
-- avaxFuji
+| Blockchain | Network | Name  |
+|---        |---        |---|
+| Ethereum  | mainnet   | ethMainnet        |
+| Ethereum  | testnet   | ethRinkeby        |
+| Binance   | mainnet   | bscMainnet        |
+| Binance   | testnet   | bscTestnet        |
+| Polygon   | mainnet   | polygonMainnet    |
+| Polygon   | testnet   | polygonMumbai     |
+| Cronos    | mainnet   | cronosMainnetBeta |
+| Cronos    | testnet   | cronosTestnet     |
+| Avalanche | mainnet   | avaxMainnet       |
+| Avalanche | testnet   | avaxFuji          |
+| Moonbeam  | mainnet   | moonbeam          |
+| Moonbeam  | testnet   | moonbaseAlpha     |
+| Boba      | mainnet   | bobaMainnet       |
+| Boba      | testnet   | bobaRinkeby       |
 
-## Compile
-`yarn compile`
+## Scripts
 
-## Deploy
-`yarn deploy --network <supported network>`
+### Compile
+```sh
+yarn compile
+```
 
-### Legacy scripts:
+### Generate typings
+```sh
+yarn typegen
+```
 
-    "deploy-contract-cronos-mainnet": "npx hardhat run scripts/deploy.ts --network cronosMainnetBeta",
-    "deploy-contract-cronos-testnet": "npx hardhat run scripts/deploy.ts --network cronosTestnet",
-    "deploy-contract-avax-mainnet": "npx hardhat run scripts/deploy.ts --network avaxMainnet",
-    "deploy-contract-avax-testnet": "npx hardhat run scripts/deploy.ts --network avaxFuji"
+### Run tests
+```sh
+yarn test
+```
+
+### Lint
+```sh
+yarn lint
+```
+
+### Deploy
+```sh
+yarn deploy --network <network>
+```
+
+### Export ABI
+```sh
+yarn abi
+```
+
+## Upgrades, Proxy approach
+We use UUPS proxy pattern.
+
+**Requires:** openzeppelin/hardhat-upgrades
+
+### Simple rules to upgrade contract:
+
+1. Don't forget to implement upgrade method inside implementation(_authorizeUpgrade).
+2. Append new variables to the end of the variables list.
+3. Don't delete old variables.
+
+### In code
+
+#### To deploy proxy:
+`upgrades.deployProxy(ContractFactory, [contructor args], { kind : "uups" })`
+
+#### To update proxy:
+`upgrades.upgradeProxy(address of old impl, newContractFactory)`
+
+### Through command line
+
+```sh
+yarn upgradeMarket --network <network>
+```
+[comment]: <> (yarn upgradeToken --network <network>)
+
