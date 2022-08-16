@@ -4,13 +4,12 @@ export enum ContractType {
   beacon = "beacon",
   market = "market",
   factory = "factory",
+  token = "token",
 }
 
-interface AddressTrackingEntry {
-  [ContractType.beacon]?: string;
-  [ContractType.market]?: string;
-  [ContractType.factory]?: string;
-}
+type AddressTrackingEntry = {
+  [key in ContractType]?: string;
+};
 
 type AddressTrackingMap = Map<string, AddressTrackingEntry>;
 

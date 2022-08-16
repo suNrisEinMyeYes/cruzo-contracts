@@ -1,5 +1,9 @@
 import { ethers, network } from "hardhat";
-import { getAddress } from "../../utils/addressTracking";
+import {
+  ContractType,
+  getAddress,
+  setAddress,
+} from "../../utils/addressTracking";
 import { ContractReceipt } from "ethers";
 import { getEvent } from "../../utils/getEvent";
 
@@ -23,8 +27,11 @@ async function main() {
   );
   const receipt: ContractReceipt = await tx.wait();
   const event = getEvent(receipt, "NewTokenCreated");
+  const tokenAddress = event.args?.tokenAddress;
   console.log("Token Contract Deployed");
-  console.log("Token Contract Address : ", event.args?.tokenAddress);
+  console.log("Token Contract Address : ", tokenAddress);
+
+  setAddress(chainId, ContractType.token, tokenAddress);
 }
 
 main()
