@@ -455,6 +455,141 @@ describe("CruzoMarket", () => {
     });
   });
 
+  describe("giftTrade", () => {
+    it("Should Gift Trade", async () => {
+      const tokenId = ethers.BigNumber.from("1");
+      const supply = ethers.BigNumber.from("100");
+      const tradeAmount = ethers.BigNumber.from("10");
+      const price = ethers.utils.parseEther("0.01");
+
+      const giftAmount = ethers.BigNumber.from("5");
+
+      expect(
+        await token
+          .connect(seller)
+          .create(tokenId, supply, seller.address, "", [])
+      );
+
+      expect(
+        await market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
+      );
+
+      expect(await token.balanceOf(addressee.address, tokenId)).eq(0);
+
+      await expect(
+        market
+          .connect(seller)
+          .giftTrade(token.address, tokenId, giftAmount, addressee.address)
+      )
+        .emit(market, "TradeGifted")
+        .withArgs(
+          token.address,
+          tokenId,
+          seller.address,
+          giftAmount,
+          addressee.address
+        );
+
+      expect(await token.balanceOf(addressee.address, tokenId)).eq(5);
+      expect(await token.balanceOf(market.address, tokenId)).eq(5);
+    });
+
+    it("Gifting trade to own address is useless", async () => {
+      const tokenId = ethers.BigNumber.from("1");
+      const supply = ethers.BigNumber.from("100");
+      const tradeAmount = ethers.BigNumber.from("10");
+      const price = ethers.utils.parseEther("0.01");
+
+      const giftAmount = ethers.BigNumber.from("5");
+
+      expect(
+        await token
+          .connect(seller)
+          .create(tokenId, supply, seller.address, "", [])
+      );
+
+      expect(
+        await market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
+      );
+
+      await expect(
+        market
+          .connect(seller)
+          .giftTrade(token.address, tokenId, giftAmount, seller.address)
+      ).revertedWith("Useless operation");
+
+      expect(await token.balanceOf(addressee.address, tokenId)).eq(0);
+      expect(await token.balanceOf(market.address, tokenId)).eq(10);
+    });
+
+    it("Not enough items in trade", async () => {
+      const tokenId = ethers.BigNumber.from("1");
+      const supply = ethers.BigNumber.from("100");
+      const tradeAmount = ethers.BigNumber.from("10");
+      const price = ethers.utils.parseEther("0.01");
+
+      expect(
+        await token
+          .connect(seller)
+          .create(tokenId, supply, seller.address, "", [])
+      );
+
+      expect(
+        await market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
+      );
+
+      await expect(
+        market
+          .connect(seller)
+          .giftTrade(
+            token.address,
+            tokenId,
+            tradeAmount.add("1"),
+            addressee.address
+          )
+      ).revertedWith("Not enough items in trade");
+
+      expect(await token.balanceOf(addressee.address, tokenId)).eq(0);
+      expect(await token.balanceOf(market.address, tokenId)).eq(10);
+    });
+
+    it("Not allowed to gift trade of another user", async () => {
+      const tokenId = ethers.BigNumber.from("1");
+      const supply = ethers.BigNumber.from("100");
+      const tradeAmount = ethers.BigNumber.from("10");
+      const price = ethers.utils.parseEther("0.01");
+
+      const giftAmount = ethers.BigNumber.from("5");
+
+      expect(
+        await token
+          .connect(seller)
+          .create(tokenId, supply, seller.address, "", [])
+      );
+
+      expect(
+        await market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
+      );
+
+      await expect(
+        market
+          .connect(buyer)
+          .giftTrade(token.address, tokenId, giftAmount, seller.address)
+      ).revertedWith("Not enough items in trade");
+
+      expect(await token.balanceOf(addressee.address, tokenId)).eq(0);
+      expect(await token.balanceOf(market.address, tokenId)).eq(10);
+    });
+  });
+
   describe("closeTrade", () => {
     it("Should Close Trade", async () => {
       const tokenId = ethers.BigNumber.from("1");
@@ -627,6 +762,7 @@ describe("CruzoMarket", () => {
         ).revertedWith("Trade is not open");
       });
     });
+
     describe("Proxy upgrade", () => {
       it("Change implementation", async () => {
         const tokenId = ethers.BigNumber.from("1");
