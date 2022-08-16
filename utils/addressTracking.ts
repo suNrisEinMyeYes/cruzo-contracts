@@ -14,7 +14,7 @@ interface AddressTrackingEntry {
 
 type AddressTrackingMap = Map<string, AddressTrackingEntry>;
 
-const addressMappingFileName = "networks.json";
+const addressMappingFileName = "data/networks.json";
 
 export const getAddress = (
   chainId: number
