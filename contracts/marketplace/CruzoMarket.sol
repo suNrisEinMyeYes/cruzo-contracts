@@ -37,6 +37,14 @@ contract CruzoMarket is
 
     event TradeClosed(address tokenAddress, uint256 tokenId, address seller);
 
+    event TradeGifted(
+        address tokenAddress,
+        uint256 tokenId,
+        address sender,
+        uint256 amount,
+        address addressee
+    );
+
     event TradePriceChanged(
         address tokenAddress,
         uint256 tokenId,
@@ -165,9 +173,9 @@ contract CruzoMarket is
         uint256 _amount,
         address _to
     ) external payable {
-        require(_msgSender() != _to, "useless operation");
-        require(_to != address(0), "trying to send gift to 0 address");
-        require(_to != address(this), "trying to send gift to market");
+        require(_msgSender() != _to, "Useless operation");
+        require(_to != address(0), "Trying to send gift to 0 address");
+        require(_to != address(this), "Trying to send gift to market");
 
         _executeTrade(
             _tokenAddress,
@@ -177,6 +185,29 @@ contract CruzoMarket is
             _to,
             msg.value
         );
+    }
+
+    function giftTrade(
+        address _tokenAddress,
+        uint256 _tokenId,
+        uint256 _amount,
+        address _to
+    ) external nonReentrant {
+        require(_msgSender() != _to, "Useless operation");
+        require(_to != address(0), "Trying to send gift to 0 address");
+        require(_to != address(this), "Trying to send gift to market");
+        Trade storage trade = trades[_tokenAddress][_tokenId][_msgSender()];
+        require(_amount > 0, "Amount must be greater than 0");
+        require(trade.amount >= _amount, "Not enough items in trade");
+        trade.amount -= _amount;
+        IERC1155Upgradeable(_tokenAddress).safeTransferFrom(
+            address(this),
+            _to,
+            _tokenId,
+            _amount,
+            ""
+        );
+        emit TradeGifted(_tokenAddress, _tokenId, _msgSender(), _amount, _to);
     }
 
     function closeTrade(address _tokenAddress, uint256 _tokenId)
