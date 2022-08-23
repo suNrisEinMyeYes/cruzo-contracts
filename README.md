@@ -24,6 +24,12 @@
 | Moonbeam   | testnet | moonbaseAlpha     |
 | Boba       | mainnet | bobaMainnet       |
 | Boba       | testnet | bobaRinkeby       |
+| BitTorrent | mainnet | bitTorrentMainnet |
+| BitTorrent | testnet | bitTorrentDonau   |
+| XDC        | mainnet | xdcMainnet        |
+| XDC        | testnet | xdcApothem        |
+| Lukso      | testnet | l16Testnet        |
+| Evmos      | testnet | evmosTestnet      |
 
 ## Scripts
 
