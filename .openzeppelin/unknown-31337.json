@@ -643,17 +643,17 @@
     },
     {
       "address": "0xC9a43158891282A2B1475592D5719c001986Aaec",
-      "txHash": "0xb428873d8c37a7387b2bf5b3166ed8c651a9b6ef3d24623fa4149b5b55532ca9",
+      "txHash": "0x3eca706c01eb21c060dd2e9fa4943a9546595fc569b42f07dacaa28daf429239",
       "kind": "uups"
     },
     {
       "address": "0x4631BCAbD6dF18D94796344963cB60d44a4136b6",
-      "txHash": "0x52b8c0fa0eaaf246b752a6032569a2ef8ceb959f689f9443b356590a3b42d113",
+      "txHash": "0x1b6d706f0bae6098fd02b3c60ea095ea48c93bf2ae033cd533d7c0238ffc1124",
       "kind": "uups"
     },
     {
       "address": "0xAA292E8611aDF267e563f334Ee42320aC96D0463",
-      "txHash": "0xe3d4ed5633dc55d10b5982befd08c51f04e8e81d9a1bac3f8fb36117164327d9",
+      "txHash": "0xf354b65a140ab29563bcd1cac5968854432834186ca777370a8cb7bb888a0b4a",
       "kind": "uups"
     },
     {
@@ -673,82 +673,82 @@
     },
     {
       "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
-      "txHash": "0xa4ad825f15f0cf265152b675bf8cb7cbf758bb7be791a0ccff4cc13ba2c784c4",
+      "txHash": "0xe73d99b41703674e0c97c5efa775434ce478507e8d3301df6e41f13e4e609996",
       "kind": "uups"
     },
     {
       "address": "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853",
-      "txHash": "0x22792154c99ddb17b25b6845d36b10fe48279213fdd449a10e98b546fac0a1d1",
+      "txHash": "0x857465ce3f8255095704eeacd0d32204c60364e76e8f108a167972ef9cb87d20",
       "kind": "uups"
     },
     {
       "address": "0x9A676e781A523b5d0C0e43731313A708CB607508",
-      "txHash": "0xed98e0faca6a385d46bdaa8573bae033a41d502a9cc1d601b9c4c221561ff8a8",
+      "txHash": "0xbeeaba7e739acc49fe26e61df3fcb64fc7a17b5410c6a8bdc32da4722c5320e9",
       "kind": "uups"
     },
     {
       "address": "0x3Aa5ebB10DC797CAC828524e59A333d0A371443c",
-      "txHash": "0xddf116d323d4f3f008ce797216974ee46cc13efbee2fa7a1ab38355b798d771b",
+      "txHash": "0x26b4891acacef2eaa05a01e9d3d921ca288c92e4fab7674ce30b2704b0282595",
       "kind": "uups"
     },
     {
       "address": "0x4A679253410272dd5232B3Ff7cF5dbB88f295319",
-      "txHash": "0xe07146d9f17263ab181edd166be4b12d0b22de63165dc45f705484ba63bd47c3",
+      "txHash": "0x96b609f9f409ec25bde6a1af9b12afac44f25e7606f69b7116c82014f2fca800",
       "kind": "uups"
     },
     {
       "address": "0x84eA74d481Ee0A5332c457a4d796187F6Ba67fEB",
-      "txHash": "0xc8ff51714a59f420f42e6b6b63a0aa7e530f68188ca152f4f0b277d1227421ce",
+      "txHash": "0xa611da8409e74c85b8ad1cca8456006be011c29a0ad85413ce91f6134a0978d8",
       "kind": "uups"
     },
     {
       "address": "0x95401dc811bb5740090279Ba06cfA8fcF6113778",
-      "txHash": "0x970d111b180837f139f3f376024bee1a997bd78a61a4d784201fa41c5ece92ac",
+      "txHash": "0xf539a9cab3d59ebb17e91223d8fe78a6fe5e28518afbb9ce3b7ee0d87cb6fdd2",
       "kind": "uups"
     },
     {
       "address": "0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf",
-      "txHash": "0x2dd31b28ca452cff9ae21a0beb354b88d39fbb7963c4982ef28798b0fde9d399",
+      "txHash": "0x77ddf801b618dac54a6b2f5859f81ccca28433081673cd0342efb6aceb7f9067",
       "kind": "uups"
     },
     {
       "address": "0x1291Be112d480055DaFd8a610b7d1e203891C274",
-      "txHash": "0xf096ea8d2e21a625b5e261f2ee55fd01491474d33ed41a9ffc3965e366193ff6",
+      "txHash": "0xc155e86db8db7151c530aee9122bd3ffe86fbdae46030115124a3920ee00b8a3",
       "kind": "uups"
     },
     {
       "address": "0xcbEAF3BDe82155F56486Fb5a1072cb8baAf547cc",
-      "txHash": "0xb68367caf84d117ed7a7414fc133fd80e70a0074674a0b034c6e67d5bbb0aab2",
+      "txHash": "0x1e1bfac73a5ca8df6f3e680deb2078058b8db40fc35061bf1ce004908235ac13",
       "kind": "uups"
     },
     {
       "address": "0x04C89607413713Ec9775E14b954286519d836FEf",
-      "txHash": "0x84fa002a6db4455f55bb6283b90d707bc5c202af5b3df816f05cdff6dcc84d98",
+      "txHash": "0xc3157148554b2adc01b6510aa84a9fb8ab1fe8f8a0de697062bbd8dbc6c988da",
       "kind": "uups"
     },
     {
       "address": "0x51A1ceB83B83F1985a81C295d1fF28Afef186E02",
-      "txHash": "0x537ba5caa6da3301d4478e4f7d698e67390098e28386caa011c669cdbbc211f9",
+      "txHash": "0xef10c76a03b2760b065ecb9a671cbcb44837c2f0d2e387da4a80050234d34d6f",
       "kind": "uups"
     },
     {
       "address": "0x172076E0166D1F9Cc711C77Adf8488051744980C",
-      "txHash": "0x8c8c1ceaa069dda017ffbf39772bc58cd4d6855ee3086ae83d2f9596b9b86046",
+      "txHash": "0xd58669295718fcb915bfbd6688569b8fb99bf8a3621cc2bdf14d640e05d038fe",
       "kind": "uups"
     },
     {
       "address": "0xC9a43158891282A2B1475592D5719c001986Aaec",
-      "txHash": "0xb428873d8c37a7387b2bf5b3166ed8c651a9b6ef3d24623fa4149b5b55532ca9",
+      "txHash": "0x3eca706c01eb21c060dd2e9fa4943a9546595fc569b42f07dacaa28daf429239",
       "kind": "uups"
     },
     {
       "address": "0x4631BCAbD6dF18D94796344963cB60d44a4136b6",
-      "txHash": "0x52b8c0fa0eaaf246b752a6032569a2ef8ceb959f689f9443b356590a3b42d113",
+      "txHash": "0x1b6d706f0bae6098fd02b3c60ea095ea48c93bf2ae033cd533d7c0238ffc1124",
       "kind": "uups"
     },
     {
       "address": "0xAA292E8611aDF267e563f334Ee42320aC96D0463",
-      "txHash": "0xe3d4ed5633dc55d10b5982befd08c51f04e8e81d9a1bac3f8fb36117164327d9",
+      "txHash": "0xf354b65a140ab29563bcd1cac5968854432834186ca777370a8cb7bb888a0b4a",
       "kind": "uups"
     },
     {
@@ -925,7 +925,7 @@
   "impls": {
     "f6ac769465103605cc5b5d0e161abac719fa872e78dc2e88eb4431541d62367c": {
       "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
-      "txHash": "0xf646a2091be10d92ea00db34aa27b10ffb2c0364c00e2a41c161df28ca1420c0",
+      "txHash": "0xd5fc58ce548658bc8fe77b10c00e8ea9b35d55cf2c5ffcaa2528f8775f99c159",
       "layout": {
         "storage": [
           {
@@ -1052,7 +1052,7 @@
             "label": "_uriType",
             "offset": 0,
             "slot": "302",
-            "type": "t_enum(URIType)4915",
+            "type": "t_enum(URIType)4935",
             "contract": "ERC1155URI",
             "src": "contracts/tokens/ERC1155URI.sol:18"
           },
@@ -1134,7 +1134,7 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_enum(URIType)4915": {
+          "t_enum(URIType)4935": {
             "label": "enum ERC1155URI.URIType",
             "members": [
               "DEFAULT",
@@ -1185,7 +1185,7 @@
     },
     "923033a3b105e50b74680e5338bdd9816498f87325a0a699007e6c44f9f1296a": {
       "address": "0x5067457698Fd6Fa1C6964e416b3f42713513B3dD",
-      "txHash": "0x4bb21c73a12ad52b1f402785c7a08f42d5607a6e3a67dae11d7d7dbe43f2480b",
+      "txHash": "0xb118f986385cde559df0031143d1b1a1082653f05c5e588704235b80dafe61e1",
       "layout": {
         "storage": [
           {
@@ -1312,7 +1312,7 @@
             "label": "_uriType",
             "offset": 0,
             "slot": "302",
-            "type": "t_enum(URIType)4915",
+            "type": "t_enum(URIType)4935",
             "contract": "ERC1155URI",
             "src": "contracts/tokens/ERC1155URI.sol:18"
           },
@@ -1394,7 +1394,7 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_enum(URIType)4915": {
+          "t_enum(URIType)4935": {
             "label": "enum ERC1155URI.URIType",
             "members": [
               "DEFAULT",
@@ -1540,7 +1540,7 @@
             "label": "vaultedTokens",
             "offset": 0,
             "slot": "352",
-            "type": "t_mapping(t_bytes32,t_struct(TokenCredentials)5609_storage)",
+            "type": "t_mapping(t_bytes32,t_struct(TokenCredentials)5629_storage)",
             "contract": "Cruzo1155Vault",
             "src": "contracts/utils/Cruzo1155Vault.sol:72"
           }
@@ -1566,11 +1566,11 @@
             "label": "bytes32",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_bytes32,t_struct(TokenCredentials)5609_storage)": {
+          "t_mapping(t_bytes32,t_struct(TokenCredentials)5629_storage)": {
             "label": "mapping(bytes32 => struct Cruzo1155Vault.TokenCredentials)",
             "numberOfBytes": "32"
           },
-          "t_struct(TokenCredentials)5609_storage": {
+          "t_struct(TokenCredentials)5629_storage": {
             "label": "struct Cruzo1155Vault.TokenCredentials",
             "members": [
               {
@@ -1601,9 +1601,9 @@
         }
       }
     },
-    "a49a788d1da13c3e250f2696c94e774abe5aee7276cd8567298553820ccb2ac2": {
+    "619e17e2b56f31e11fbedd58acd93dcf8dc4d668c8cd4792e996399186e38132": {
       "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      "txHash": "0x256c0b12a3a3026c2928362b3d101a501e52eafaa0afccb7c172adbbec304d98",
+      "txHash": "0x99b8f13a3028285b2e81e2aa9a95cc294c36a3695f744ac517b894d2561831db",
       "layout": {
         "storage": [
           {
@@ -1706,9 +1706,9 @@
             "label": "trades",
             "offset": 0,
             "slot": "401",
-            "type": "t_mapping(t_address,t_mapping(t_uint256,t_mapping(t_address,t_struct(Trade)3768_storage)))",
+            "type": "t_mapping(t_address,t_mapping(t_uint256,t_mapping(t_address,t_struct(Trade)3789_storage)))",
             "contract": "CruzoMarket",
-            "src": "contracts/marketplace/CruzoMarket.sol:165"
+            "src": "contracts/marketplace/CruzoMarket.sol:164"
           },
           {
             "label": "serviceFee",
@@ -1716,7 +1716,7 @@
             "slot": "402",
             "type": "t_uint16",
             "contract": "CruzoMarket",
-            "src": "contracts/marketplace/CruzoMarket.sol:169"
+            "src": "contracts/marketplace/CruzoMarket.sol:168"
           },
           {
             "label": "rawVaultFuncSignature",
@@ -1724,7 +1724,7 @@
             "slot": "403",
             "type": "t_string_storage",
             "contract": "CruzoMarket",
-            "src": "contracts/marketplace/CruzoMarket.sol:171"
+            "src": "contracts/marketplace/CruzoMarket.sol:170"
           },
           {
             "label": "vaultAddress",
@@ -1732,7 +1732,7 @@
             "slot": "404",
             "type": "t_address",
             "contract": "CruzoMarket",
-            "src": "contracts/marketplace/CruzoMarket.sol:173"
+            "src": "contracts/marketplace/CruzoMarket.sol:172"
           }
         ],
         "types": {
@@ -1752,15 +1752,15 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_mapping(t_address,t_mapping(t_uint256,t_mapping(t_address,t_struct(Trade)3768_storage)))": {
+          "t_mapping(t_address,t_mapping(t_uint256,t_mapping(t_address,t_struct(Trade)3789_storage)))": {
             "label": "mapping(address => mapping(uint256 => mapping(address => struct CruzoMarket.Trade)))",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_address,t_struct(Trade)3768_storage)": {
+          "t_mapping(t_address,t_struct(Trade)3789_storage)": {
             "label": "mapping(address => struct CruzoMarket.Trade)",
             "numberOfBytes": "32"
           },
-          "t_mapping(t_uint256,t_mapping(t_address,t_struct(Trade)3768_storage))": {
+          "t_mapping(t_uint256,t_mapping(t_address,t_struct(Trade)3789_storage))": {
             "label": "mapping(uint256 => mapping(address => struct CruzoMarket.Trade))",
             "numberOfBytes": "32"
           },
@@ -1768,7 +1768,7 @@
             "label": "string",
             "numberOfBytes": "32"
           },
-          "t_struct(Trade)3768_storage": {
+          "t_struct(Trade)3789_storage": {
             "label": "struct CruzoMarket.Trade",
             "members": [
               {

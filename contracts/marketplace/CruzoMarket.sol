@@ -143,8 +143,7 @@ contract CruzoMarket is
         address tokenAddress,
         uint256 tokenId,
         address sender,
-        uint256 amount,
-        bytes32 hash
+        uint256 amount
     );
 
     event TradePriceChanged(
@@ -320,8 +319,7 @@ contract CruzoMarket is
             _tokenAddress,
             _tokenId,
             _msgSender(),
-            _amount,
-            _hash
+            _amount
         );
     }
 
