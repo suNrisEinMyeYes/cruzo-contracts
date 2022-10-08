@@ -33,6 +33,8 @@
 | Evmos      | testnet | evmosTestnet      |
 | Cube       | mainnet | cubeMainnet       |
 | Cube       | testnet | cubeTestnet       |
+| Klaytn     | mainnet | klaytnMainnet     |
+| Klaytn     | testnet | klaytnTestnet     |
 
 ## Scripts
 

@@ -154,6 +154,16 @@ const config: HardhatUserConfig = {
       // gas: 1000000,
       // gasPrice: 2000000000,
     },
+    klaytnMainnet: {
+      url: "https://public-node-api.klaytnapi.com/v1/cypress",
+      chainId: 8217,
+      accounts: PKS,
+    },
+    klaytnTestnet: {
+      url: "https://public-node-api.klaytnapi.com/v1/baobab",
+      chainId: 1001,
+      accounts: PKS,
+    },
   },
   etherscan: {
     apiKey: {
