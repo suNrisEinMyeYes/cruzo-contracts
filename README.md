@@ -12,7 +12,7 @@
 | Blockchain | Network | Name              |
 | ---------- | ------- | ----------------- |
 | Ethereum   | mainnet | ethMainnet        |
-| Ethereum   | testnet | ethRinkeby        |
+| Ethereum   | testnet | ethGoerli         |
 | Binance    | mainnet | bscMainnet        |
 | Binance    | testnet | bscTestnet        |
 | Polygon    | mainnet | polygonMainnet    |

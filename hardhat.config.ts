@@ -44,9 +44,9 @@ const config: HardhatUserConfig = {
       chainId: 1,
       accounts: PKS,
     },
-    ethRinkeby: {
-      url: "https://rinkeby.infura.io/v3/2439f263ff0c4b29bfa0cf70da744d46",
-      chainId: 4,
+    ethGoerli: {
+      url: "https://goerli.infura.io/v3/2439f263ff0c4b29bfa0cf70da744d46",
+      chainId: 5,
       accounts: PKS,
     },
     bscTestnet: {
@@ -169,6 +169,7 @@ const config: HardhatUserConfig = {
     apiKey: {
       mainnet: ETHERSCAN_API_KEY,
       rinkeby: ETHERSCAN_API_KEY,
+      goerli: ETHERSCAN_API_KEY,
       polygon: POLYGONSCAN_API_KEY,
       polygonMumbai: POLYGONSCAN_API_KEY,
       bsc: BSC_API_KEY,
