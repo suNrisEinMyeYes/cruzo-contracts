@@ -51,11 +51,13 @@ contract Cruzo1155Vault is
         _;
     }
     event GiftVaulted(
+        bytes32 hash,
         address indexed tokenAddress,
         uint256 indexed tokenId,
         uint256 indexed amount
     );
     event GiftClaimed(
+        bytes32 hash,
         address indexed claimer,
         address indexed tokenAddress,
         uint256 indexed tokenId,
@@ -98,6 +100,7 @@ contract Cruzo1155Vault is
         );
         delete vaultedTokens[_hash];
         emit GiftClaimed(
+            _hash,
             _targetAddress,
             token.tokenAddress,
             token.tokenId,
@@ -127,7 +130,7 @@ contract Cruzo1155Vault is
             _tokenId,
             _amount
         );
-        emit GiftVaulted(_tokenAddress, _tokenId, _amount);
+        emit GiftVaulted(_hash, _tokenAddress, _tokenId, _amount);
     }
 
     function setMarketAddress(address newAddress) external onlyOwner {
