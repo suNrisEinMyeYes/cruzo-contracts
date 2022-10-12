@@ -84,6 +84,17 @@ yarn abi
 yarn verify --contract <contract source:contract name> --network <netowrk> <contract> [<arg1> <arg2> ...]
 ```
 
+#### Verify Market
+```sh
+yarn verify --network ethGoerli --contract contracts/marketplace/CruzoMarket.sol:CruzoMarket <address>
+```
+
+#### Verify Factory
+TBD
+
+#### Verify Token
+TBD 
+
 #### Verify Vault
 ```sh
 yarn verify --network ethGoerli --contract contracts/utils/Cruzo1155Vault.sol:Cruzo1155Vault <address>

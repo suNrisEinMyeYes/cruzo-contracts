@@ -5,7 +5,7 @@ export enum ContractType {
   market = "market",
   factory = "factory",
   token = "token",
-  vault = "vault"
+  vault = "vault",
 }
 
 type AddressTrackingEntry = {
@@ -14,6 +14,8 @@ type AddressTrackingEntry = {
 
 type AddressTrackingMap = Map<string, AddressTrackingEntry>;
 
+// todo: move selection of networks file to .env
+// const addressMappingFileName = "data/networks_dev.json";
 const addressMappingFileName = "data/networks.json";
 
 export const getAddress = (
