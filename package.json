@@ -47,6 +47,7 @@
     "deployVault": "npx hardhat run scripts/deploy/deployVault.ts",
     "upgradeBeacon": "npx hardhat run scripts/upgrade/upgradeBeacon.ts",
     "upgradeMarket": "npx hardhat run scripts/upgrade/upgradeMarket.ts",
+    "upgradeVault": "npx hardhat run scripts/upgrade/upgradeVault.ts",
     "verify": "npx hardhat verify",
     "abi": "npx hardhat export-abi",
     "test": "npx hardhat test",

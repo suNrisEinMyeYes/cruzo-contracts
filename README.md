@@ -81,7 +81,12 @@ yarn abi
 ### Verify contract
 
 ```sh
-yarn verify --network <netowrk> <contract> [<arg1> <arg2> ...]
+yarn verify --contract <contract source:contract name> --network <netowrk> <contract> [<arg1> <arg2> ...]
+```
+
+#### Verify Vault
+```sh
+yarn verify --network ethGoerli --contract contracts/utils/Cruzo1155Vault.sol:Cruzo1155Vault <address>
 ```
 
 ## Upgrades, Proxy approach
@@ -98,19 +103,19 @@ We use UUPS proxy pattern for CruzoMarket, CruzoVault contracts and BeaconProxy 
 
 ### In code
 
-#### To deploy UUPS proxy:
+#### Deploy UUPS proxy:
 
 `upgrades.deployProxy(ContractFactory, [contructor args], { kind : "uups" })`
 
-#### To update UUPS proxy:
+#### Update UUPS proxy:
 
 `upgrades.upgradeProxy(address of old impl, newContractFactory)`
 
-#### To deploy Beacon proxy:
+#### Deploy Beacon proxy:
 
 `await upgrades.deployBeacon(TokenFactory)`
 
-#### To update Beacon proxy:
+#### Update Beacon proxy:
 
 `await upgrades.upgradeBeacon(beaconAddress, newTokenFactory)`
 
