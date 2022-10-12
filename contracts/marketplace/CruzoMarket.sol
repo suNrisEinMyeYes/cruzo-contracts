@@ -142,6 +142,7 @@ contract CruzoMarket is
     event TradeGiftedViaVault(
         address tokenAddress,
         uint256 tokenId,
+        address seller,
         address sender,
         uint256 amount
     );
@@ -318,6 +319,7 @@ contract CruzoMarket is
         emit TradeGiftedViaVault(
             _tokenAddress,
             _tokenId,
+            _seller,
             _msgSender(),
             _amount
         );
