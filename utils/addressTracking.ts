@@ -14,9 +14,7 @@ type AddressTrackingEntry = {
 
 type AddressTrackingMap = Map<string, AddressTrackingEntry>;
 
-// todo: move selection of networks file to .env
-// const addressMappingFileName = "data/networks_dev.json";
-const addressMappingFileName = "data/networks.json";
+const addressMappingFileName = process.env.ADDRESS_MAPPING_FILENAME || "";
 
 export const getAddress = (
   chainId: number
