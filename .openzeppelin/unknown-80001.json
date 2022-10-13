@@ -20,6 +20,11 @@
       "address": "0xc5b9EE39d3BF7b35eBCD3e1f7591E043c876a6d1",
       "txHash": "0xe361a0db10f64cff91847fee24e82df2f1fd75a7eee86b6f892c1374196e288c",
       "kind": "uups"
+    },
+    {
+      "address": "0x489a0AB92832600278FB7B8C44035DbCA246dAD3",
+      "txHash": "0x196fee0c31b3f5176ffd4325735f77a8c63393ee218e4b5376e32bc9bc90cc3a",
+      "kind": "uups"
     }
   ],
   "impls": {
@@ -1472,7 +1477,7 @@
             "label": "_uriType",
             "offset": 0,
             "slot": "302",
-            "type": "t_enum(URIType)4912",
+            "type": "t_enum(URIType)4915",
             "contract": "ERC1155URI",
             "src": "contracts/tokens/ERC1155URI.sol:18"
           },
@@ -1554,7 +1559,7 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_enum(URIType)4912": {
+          "t_enum(URIType)4915": {
             "label": "enum ERC1155URI.URIType",
             "members": [
               "DEFAULT",

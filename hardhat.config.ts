@@ -151,8 +151,8 @@ const config: HardhatUserConfig = {
       url: "https://http-testnet.cube.network",
       chainId: 1819,
       accounts: PKS,
-      // gas: 1000000,
-      // gasPrice: 2000000000,
+      gas: 10000000,
+      gasPrice: 2000000000,
     },
     klaytnMainnet: {
       url: "https://public-node-api.klaytnapi.com/v1/cypress",
