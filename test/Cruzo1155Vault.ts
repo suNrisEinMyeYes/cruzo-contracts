@@ -18,8 +18,12 @@ describe("CruzoVault", () => {
     let buyer: SignerWithAddress;
     let claimer: SignerWithAddress;
     let claimer2: SignerWithAddress;
+    let royaltyReceiver: SignerWithAddress;
 
     const serviceFee = 300;
+    const royaltyFee = 500;
+    const serviceFeeBase = 10000;
+    const royaltyFeeBase = 10000;
     const tokenDetails = {
         name: "Cruzo",
         symbol: "CRZ",
@@ -37,10 +41,14 @@ describe("CruzoVault", () => {
     const utf8Encode = new TextEncoder();
     const secretKey = "secret"
     const hash = keccak256(utf8Encode.encode(secretKey))
+    const purchaseAmount = ethers.BigNumber.from("5");
+    const purchaseValue = price.mul(purchaseAmount);
+    const serviceFeeValue = purchaseValue.mul(serviceFee).div(serviceFeeBase);
+    const royaltyFeeValue = purchaseValue.sub(serviceFeeValue).mul(royaltyFee).div(royaltyFeeBase);
 
 
     beforeEach(async () => {
-        [owner, seller, buyer, claimer, claimer2] = await ethers.getSigners();
+        [owner, seller, buyer, claimer, claimer2, royaltyReceiver] = await ethers.getSigners();
 
         const CruzoMarket = await ethers.getContractFactory("CruzoMarket");
         const Cruzo1155 = await ethers.getContractFactory("Cruzo1155");
@@ -133,6 +141,51 @@ describe("CruzoVault", () => {
             expect(await market.connect(buyer).giftItemViaVault(token.address, tokenId, seller.address, tradeAmount, hash, { value: tradeAmount.mul(price) }))
             expect(await vault.connect(claimer).claimGiftForAnotherPerson(secretKey, claimer2.address))
             expect(await token.balanceOf(claimer2.address, tokenId)).to.eq(tradeAmount)
+        });
+        it("Rayalty check via vault", async () => {
+            const createTokenTx = await factory
+                .connect(owner)
+                .create(
+                    tokenDetails.name,
+                    tokenDetails.symbol,
+                    tokenDetails.collectionURI
+                );
+            const createTokenReceipt = await createTokenTx.wait();
+            const createTokenEvent = getEvent(createTokenReceipt, "NewTokenCreated");
+            token = await ethers.getContractAt(
+                "Cruzo1155",
+                createTokenEvent.args?.tokenAddress
+            );
+            expect(await token.connect(owner).setDefaultRoyaltyInfo(royaltyReceiver.address, royaltyFee));
+            expect(
+                await token
+                    .connect(seller)
+                    .create(tokenId, supply, seller.address, "", [])
+            );
+            await expect(
+                market
+                    .connect(seller)
+                    .openTrade(token.address, tokenId, tradeAmount, price)
+            )
+                .emit(market, "TradeOpened")
+                .withArgs(token.address, tokenId, seller.address, tradeAmount, price);
+
+            const royaltyReceiverBalance = await ethers.provider.getBalance(royaltyReceiver.address);
+            const sellerBalance = await ethers.provider.getBalance(seller.address);
+
+            expect(await token.balanceOf(vault.address, tokenId)).to.eq(0)
+            expect(await market.connect(buyer).giftItemViaVault(token.address, tokenId, seller.address, purchaseAmount, hash, { value: purchaseValue }))
+            expect(await token.balanceOf(vault.address, tokenId)).to.eq(purchaseAmount)
+
+            expect(sellerBalance.add(purchaseValue).sub(serviceFeeValue).sub(royaltyFeeValue)).eq(
+                await ethers.provider.getBalance(seller.address)
+              );
+              expect(royaltyReceiverBalance.add(royaltyFeeValue)).eq(
+                await ethers.provider.getBalance(royaltyReceiver.address)
+              );
+            expect(await vault.connect(claimer).claimGiftForMyself(secretKey))
+            expect(await token.balanceOf(vault.address, tokenId)).to.eq(0)
+            expect(await token.balanceOf(claimer.address, tokenId)).to.eq(purchaseAmount)
         });
     });
 

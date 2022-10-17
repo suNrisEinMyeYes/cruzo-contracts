@@ -7,7 +7,7 @@ import { getEvent } from "../utils/getEvent";
 import { RAW_VAULT_FUNCTION_SIGNATURE, RAW_FACTORY_INITIALIZE_SIGNATURE } from "../constants/signatures"
 
 
-describe("CruzoMarket", () => {
+describe("CruzoFactory", () => {
   let market: Contract;
   let beacon: Contract;
   let factory: Contract;

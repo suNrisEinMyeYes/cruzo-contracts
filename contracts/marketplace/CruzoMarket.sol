@@ -3,6 +3,7 @@ pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts-upgradeable/token/ERC1155/utils/ERC1155HolderUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC1155/IERC1155Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/interfaces/IERC2981Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
@@ -241,10 +242,7 @@ contract CruzoMarket is
             _amount,
             ""
         );
-        AddressUpgradeable.sendValue(
-            payable(_seller),
-            (_value * (10000 - uint256(serviceFee))) / 10000
-        );
+        _paymentProcessing(_tokenAddress, _seller, _tokenId, _value);
         trades[_tokenAddress][_tokenId][_seller].amount -= _amount;
         emit TradeExecuted(
             _tokenAddress,
@@ -406,5 +404,24 @@ contract CruzoMarket is
 
     function setVaultAddress(address _newVaultAddress) external onlyOwner {
         vaultAddress = _newVaultAddress;
+    }
+
+    function _paymentProcessing(
+        address _tokenAddress,
+        address _seller,
+        uint256 _tokenId,
+        uint256 _value
+    ) internal {
+        (address royaltyReciever, uint256 royaltyAmount) = IERC2981Upgradeable(
+            _tokenAddress
+        ).royaltyInfo(_tokenId, _value * (10000 - uint256(serviceFee)) / 10000);
+        AddressUpgradeable.sendValue(
+            payable(royaltyReciever),
+            royaltyAmount
+        );
+        AddressUpgradeable.sendValue(
+            payable(_seller),
+            (_value * (10000 - uint256(serviceFee))) / 10000 - royaltyAmount
+        );
     }
 }

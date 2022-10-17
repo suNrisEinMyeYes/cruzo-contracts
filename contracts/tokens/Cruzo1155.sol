@@ -2,8 +2,9 @@
 pragma solidity ^0.8.6;
 
 import "./ERC1155URI.sol";
+import "@openzeppelin/contracts-upgradeable/token/common/ERC2981Upgradeable.sol"; 
 
-contract Cruzo1155 is Initializable, ERC1155URI {
+contract Cruzo1155 is Initializable, ERC1155URI, ERC2981Upgradeable{
     address public marketAddress;
 
     string public name;
@@ -23,6 +24,7 @@ contract Cruzo1155 is Initializable, ERC1155URI {
         __Pausable_init();
         __ERC1155Supply_init();
         __ERC1155_init(_baseMetadataURI);
+        __ERC2981_init();
         setBaseURI(_baseMetadataURI);
         marketAddress = _marketAddress;
         name = _name;
@@ -146,5 +148,37 @@ contract Cruzo1155 is Initializable, ERC1155URI {
 
     function setContractURI(string memory _newURI) external onlyOwner {
         contractURI = _newURI;
+    }
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC2981Upgradeable, ERC1155Upgradeable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
+
+    function setDefaultRoyaltyInfo(address _receiver, uint96 _royaltyFeesInBips)
+        public
+        onlyOwner
+    {
+        require(
+            _royaltyFeesInBips <= 5000,
+            "Royalty value must be between 0% and 50%"
+        );
+        _setDefaultRoyalty(_receiver, _royaltyFeesInBips);
+    }
+
+    function setTokenRoyalty(
+        address _receiver,
+        uint96 _royaltyFeesInBips,
+        uint256 _tokenId
+    ) public onlyOwner {
+        require(
+            _royaltyFeesInBips <= 5000,
+            "Royalty value must be between 0% and 50%"
+        );
+
+        _setTokenRoyalty(_tokenId, _receiver, _royaltyFeesInBips);
     }
 }

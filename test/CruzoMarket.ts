@@ -19,9 +19,12 @@ describe("CruzoMarket", () => {
   let seller: SignerWithAddress;
   let buyer: SignerWithAddress;
   let addressee: SignerWithAddress;
+  let royaltyReceiver: SignerWithAddress;
 
   const serviceFee = 300;
+  const royaltyFee = 300;
   const serviceFeeBase = 10000;
+  const royaltyFeeBase = 10000;
 
   const tokenDetails = {
     name: "Cruzo",
@@ -35,7 +38,7 @@ describe("CruzoMarket", () => {
   };
 
   beforeEach(async () => {
-    [owner, seller, buyer, addressee] = await ethers.getSigners();
+    [owner, seller, buyer, addressee, royaltyReceiver] = await ethers.getSigners();
 
     const CruzoMarket = await ethers.getContractFactory("CruzoMarket");
     const Cruzo1155 = await ethers.getContractFactory("Cruzo1155");
@@ -802,4 +805,135 @@ describe("CruzoMarket", () => {
       });
     });
   });
+  describe("Royalties check", () => {
+    it("Royalty via simple buy", async () => {
+      const tokenId = ethers.BigNumber.from("1");
+      const supply = ethers.BigNumber.from("100");
+      const tradeAmount = ethers.BigNumber.from("10");
+      const price = ethers.utils.parseEther("0.01");
+
+      const purchaseAmount = ethers.BigNumber.from("5");
+      const purchaseValue = price.mul(purchaseAmount);
+      const serviceFeeValue = purchaseValue.mul(serviceFee).div(serviceFeeBase);
+      const royaltyFeeValue = purchaseValue.sub(serviceFeeValue).mul(royaltyFee).div(royaltyFeeBase);
+
+
+      expect(
+        await token
+          .connect(seller)
+          .create(tokenId, supply, seller.address, "", [])
+      );
+      expect(await token.connect(owner).setDefaultRoyaltyInfo(royaltyReceiver.address,royaltyFee));
+
+      expect(
+        await market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
+      );
+
+      expect(await token.balanceOf(buyer.address, tokenId)).eq(0);
+
+      const sellerBalance = await ethers.provider.getBalance(seller.address);
+      const royaltyReceiverBalance = await ethers.provider.getBalance(royaltyReceiver.address);
+
+
+      await expect(
+        market
+          .connect(buyer)
+          .buyItem(token.address, tokenId, seller.address, purchaseAmount, {
+            value: purchaseValue,
+          })
+      )
+        .emit(market, "TradeExecuted")
+        .withArgs(
+          token.address,
+          tokenId,
+          seller.address,
+          buyer.address,
+          purchaseAmount,
+          buyer.address
+        );
+
+      expect(await token.balanceOf(buyer.address, tokenId)).eq(purchaseAmount);
+      expect(await token.balanceOf(market.address, tokenId)).eq(
+        tradeAmount.sub(purchaseAmount)
+      );
+
+      expect(sellerBalance.add(purchaseValue).sub(serviceFeeValue).sub(royaltyFeeValue)).eq(
+        await ethers.provider.getBalance(seller.address)
+      );
+      expect(royaltyReceiverBalance.add(royaltyFeeValue)).eq(
+        await ethers.provider.getBalance(royaltyReceiver.address)
+      );
+
+      expect(await ethers.provider.getBalance(market.address)).eq(
+        serviceFeeValue
+      );
+    });
+    it("Royalty via gift", async () => {
+      const tokenId = ethers.BigNumber.from("1");
+      const supply = ethers.BigNumber.from("100");
+      const tradeAmount = ethers.BigNumber.from("10");
+      const price = ethers.utils.parseEther("0.01");
+
+      const purchaseAmount = ethers.BigNumber.from("5");
+      const purchaseValue = price.mul(purchaseAmount);
+      const serviceFeeValue = purchaseValue.mul(serviceFee).div(serviceFeeBase);
+      const royaltyFeeValue = purchaseValue.sub(serviceFeeValue).mul(royaltyFee).div(royaltyFeeBase);
+
+
+      expect(
+        await token
+          .connect(seller)
+          .create(tokenId, supply, seller.address, "", [])
+      );
+      expect(await token.connect(owner).setDefaultRoyaltyInfo(royaltyReceiver.address,royaltyFee));
+
+      expect(
+        await market
+          .connect(seller)
+          .openTrade(token.address, tokenId, tradeAmount, price)
+      );
+
+      expect(await token.balanceOf(buyer.address, tokenId)).eq(0);
+
+      const sellerBalance = await ethers.provider.getBalance(seller.address);
+      const royaltyReceiverBalance = await ethers.provider.getBalance(royaltyReceiver.address);
+
+
+      await expect(
+        market
+          .connect(buyer)
+          .giftItem(token.address, tokenId, seller.address, purchaseAmount, addressee.address, {
+            value: purchaseValue,
+          })
+      ).emit(market, "TradeExecuted")
+      .withArgs(
+        token.address,
+        tokenId,
+        seller.address,
+        buyer.address,
+        purchaseAmount,
+        addressee.address
+      );
+
+      expect(await token.balanceOf(addressee.address, tokenId)).eq(purchaseAmount);
+      expect(await token.balanceOf(market.address, tokenId)).eq(
+        tradeAmount.sub(purchaseAmount)
+      );
+
+      expect(sellerBalance.add(purchaseValue).sub(serviceFeeValue).sub(royaltyFeeValue)).eq(
+        await ethers.provider.getBalance(seller.address)
+      );
+      expect(royaltyReceiverBalance.add(royaltyFeeValue)).eq(
+        await ethers.provider.getBalance(royaltyReceiver.address)
+      );
+
+      expect(await ethers.provider.getBalance(market.address)).eq(
+        serviceFeeValue
+      );
+    });
+    
+  });
+  
 });
