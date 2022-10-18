@@ -78,7 +78,7 @@ contract CruzoMarket is
     ) {
         uint256 tradePrice = trades[_tokenAddress][_tokenId][_seller].price;
 
-        if (_value != tradePrice * _amount) {
+        if (_seller != _msgSender() && _value != tradePrice * _amount) {
             revert Market__IncorrectSentEtherValue(
                 _value,
                 tradePrice * _amount
@@ -130,14 +130,6 @@ contract CruzoMarket is
     );
 
     event TradeClosed(address tokenAddress, uint256 tokenId, address seller);
-
-    event TradeGifted(
-        address tokenAddress,
-        uint256 tokenId,
-        address sender,
-        uint256 amount,
-        address addressee
-    );
 
     event TradeGiftedViaVault(
         address tokenAddress,
@@ -229,7 +221,6 @@ contract CruzoMarket is
     )
         internal
         nonReentrant
-        isBuyerNotASeller(_seller)
         isEnoughItemsInTrade(_tokenAddress, _tokenId, _seller, _amount)
         isEtherValueCorrect(_value, _tokenAddress, _tokenId, _seller, _amount)
         isAmountCorrect(_amount)
@@ -241,10 +232,12 @@ contract CruzoMarket is
             _amount,
             ""
         );
-        AddressUpgradeable.sendValue(
-            payable(_seller),
-            (_value * (10000 - uint256(serviceFee))) / 10000
-        );
+        if (_seller != _msgSender()) {
+            AddressUpgradeable.sendValue(
+                payable(_seller),
+                (_value * (10000 - uint256(serviceFee))) / 10000
+            );
+        }
         trades[_tokenAddress][_tokenId][_seller].amount -= _amount;
         emit TradeExecuted(
             _tokenAddress,
@@ -261,7 +254,7 @@ contract CruzoMarket is
         uint256 _tokenId,
         address _seller,
         uint256 _amount
-    ) external payable {
+    ) external payable isBuyerNotASeller(_seller) {
         _executeTrade(
             _tokenAddress,
             _tokenId,
@@ -323,30 +316,6 @@ contract CruzoMarket is
             _msgSender(),
             _amount
         );
-    }
-
-    function giftTrade(
-        address _tokenAddress,
-        uint256 _tokenId,
-        uint256 _amount,
-        address _to
-    )
-        external
-        nonReentrant
-        isReceiverCorrect(_to)
-        isAmountCorrect(_amount)
-        isEnoughItemsInTrade(_tokenAddress, _tokenId, _msgSender(), _amount)
-    {
-        Trade storage trade = trades[_tokenAddress][_tokenId][_msgSender()];
-        IERC1155Upgradeable(_tokenAddress).safeTransferFrom(
-            address(this),
-            _to,
-            _tokenId,
-            _amount,
-            ""
-        );
-        trade.amount -= _amount;
-        emit TradeGifted(_tokenAddress, _tokenId, _msgSender(), _amount, _to);
     }
 
     function closeTrade(address _tokenAddress, uint256 _tokenId)
