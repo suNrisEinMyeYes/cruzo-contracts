@@ -86,7 +86,7 @@ describe("CruzoMarket", () => {
       expect(
         await token
           .connect(seller)
-          .create(tokenId, supply, seller.address, "", [])
+          .create(tokenId, supply, seller.address, "", [], seller.address, royaltyFee)
       );
       await expect(
         market
@@ -118,7 +118,7 @@ describe("CruzoMarket", () => {
       expect(
         await token
           .connect(seller)
-          .create(tokenId, supply, seller.address, "", [])
+          .create(tokenId, supply, seller.address, "", [], seller.address, royaltyFee)
       );
 
       await expect(
@@ -137,7 +137,7 @@ describe("CruzoMarket", () => {
       expect(
         await token
           .connect(seller)
-          .create(tokenId, supply, seller.address, "", [])
+          .create(tokenId, supply, seller.address, "", [], seller.address, royaltyFee)
       );
 
       expect(
@@ -160,7 +160,7 @@ describe("CruzoMarket", () => {
       expect(
         await token
           .connect(seller)
-          .create(tokenId, supply, seller.address, "", [])
+          .create(tokenId, supply, seller.address, "", [], seller.address, royaltyFee)
       );
 
       expect(
@@ -183,7 +183,7 @@ describe("CruzoMarket", () => {
       expect(
         await token
           .connect(seller)
-          .create(tokenId, supply, seller.address, "", [])
+          .create(tokenId, supply, seller.address, "", [], seller.address, royaltyFee)
       );
 
       await expect(
@@ -208,7 +208,7 @@ describe("CruzoMarket", () => {
       expect(
         await token
           .connect(seller)
-          .create(tokenId, supply, seller.address, "", [])
+          .create(tokenId, supply, seller.address, "", [], seller.address, royaltyFee)
       );
 
       expect(
@@ -264,7 +264,7 @@ describe("CruzoMarket", () => {
       expect(
         await token
           .connect(seller)
-          .create(tokenId, supply, seller.address, "", [])
+          .create(tokenId, supply, seller.address, "", [], seller.address, royaltyFee)
       );
 
       expect(
@@ -326,7 +326,7 @@ describe("CruzoMarket", () => {
       expect(
         await token
           .connect(seller)
-          .create(tokenId, supply, seller.address, "", [])
+          .create(tokenId, supply, seller.address, "", [], seller.address, royaltyFee)
       );
 
       expect(
@@ -351,7 +351,7 @@ describe("CruzoMarket", () => {
       expect(
         await token
           .connect(seller)
-          .create(tokenId, supply, seller.address, "", [])
+          .create(tokenId, supply, seller.address, "", [], seller.address, royaltyFee)
       );
 
       expect(
@@ -376,7 +376,7 @@ describe("CruzoMarket", () => {
       expect(
         await token
           .connect(seller)
-          .create(tokenId, supply, seller.address, "", [])
+          .create(tokenId, supply, seller.address, "", [], seller.address, royaltyFee)
       );
 
       expect(
@@ -401,7 +401,7 @@ describe("CruzoMarket", () => {
       expect(
         await token
           .connect(seller)
-          .create(tokenId, supply, seller.address, "", [])
+          .create(tokenId, supply, seller.address, "", [], seller.address, royaltyFee)
       );
 
       expect(
@@ -437,7 +437,7 @@ describe("CruzoMarket", () => {
       expect(
         await token
           .connect(seller)
-          .create(tokenId, supply, contractSeller.address, "", [])
+          .create(tokenId, supply, contractSeller.address, "", [], seller.address, royaltyFee)
       );
 
       expect(await contractSeller.openTrade(tokenId, tradeAmount, price));
@@ -470,7 +470,7 @@ describe("CruzoMarket", () => {
       expect(
         await token
           .connect(seller)
-          .create(tokenId, supply, seller.address, "", [])
+          .create(tokenId, supply, seller.address, "", [], seller.address, royaltyFee)
       );
 
       expect(
@@ -510,7 +510,7 @@ describe("CruzoMarket", () => {
       expect(
         await token
           .connect(seller)
-          .create(tokenId, supply, seller.address, "", [])
+          .create(tokenId, supply, seller.address, "", [], seller.address, royaltyFee)
       );
 
       expect(
@@ -538,7 +538,7 @@ describe("CruzoMarket", () => {
       expect(
         await token
           .connect(seller)
-          .create(tokenId, supply, seller.address, "", [])
+          .create(tokenId, supply, seller.address, "", [], seller.address, royaltyFee)
       );
 
       expect(
@@ -573,7 +573,7 @@ describe("CruzoMarket", () => {
       expect(
         await token
           .connect(seller)
-          .create(tokenId, supply, seller.address, "", [])
+          .create(tokenId, supply, seller.address, "", [], seller.address, royaltyFee)
       );
 
       expect(
@@ -603,7 +603,7 @@ describe("CruzoMarket", () => {
       expect(
         await token
           .connect(seller)
-          .create(tokenId, supply, seller.address, "", [])
+          .create(tokenId, supply, seller.address, "", [], seller.address, royaltyFee)
       );
 
       expect(
@@ -678,7 +678,7 @@ describe("CruzoMarket", () => {
         expect(
           await token
             .connect(seller)
-            .create(tokenId, supply, seller.address, "", [])
+            .create(tokenId, supply, seller.address, "", [], seller.address, royaltyFee)
         );
 
         expect(
@@ -731,7 +731,7 @@ describe("CruzoMarket", () => {
         expect(
           await token
             .connect(seller)
-            .create(tokenId, supply, seller.address, "", [])
+            .create(tokenId, supply, seller.address, "", [], seller.address, royaltyFee)
         );
 
         expect(
@@ -778,7 +778,7 @@ describe("CruzoMarket", () => {
         expect(
           await token
             .connect(seller)
-            .create(tokenId, supply, seller.address, "", [])
+            .create(tokenId, supply, seller.address, "", [], seller.address, royaltyFee)
         );
 
         expect(
@@ -821,9 +821,8 @@ describe("CruzoMarket", () => {
       expect(
         await token
           .connect(seller)
-          .create(tokenId, supply, seller.address, "", [])
+          .create(tokenId, supply, seller.address, "", [], royaltyReceiver.address, royaltyFee)
       );
-      expect(await token.connect(owner).setDefaultRoyaltyInfo(royaltyReceiver.address,royaltyFee));
 
       expect(
         await market
@@ -885,9 +884,8 @@ describe("CruzoMarket", () => {
       expect(
         await token
           .connect(seller)
-          .create(tokenId, supply, seller.address, "", [])
+          .create(tokenId, supply, seller.address, "", [], royaltyReceiver.address, royaltyFee)
       );
-      expect(await token.connect(owner).setDefaultRoyaltyInfo(royaltyReceiver.address,royaltyFee));
 
       expect(
         await market

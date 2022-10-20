@@ -95,9 +95,13 @@ contract Cruzo1155 is Initializable, ERC1155URI, ERC2981Upgradeable{
         uint256 _amount,
         address _to,
         string memory _uri,
-        bytes memory _data
+        bytes memory _data,
+        address _royaltyReceiver,
+        uint96 _royaltyFee
     ) public returns (uint256) {
-        return _createToken(_tokenId, _amount, _to, _uri, _data);
+        uint256 _tokenId = _createToken(_tokenId, _amount, _to, _uri, _data);
+        setTokenRoyalty(_royaltyReceiver,_royaltyFee,_tokenId);
+        return _tokenId;
     }
 
     /**
@@ -173,7 +177,7 @@ contract Cruzo1155 is Initializable, ERC1155URI, ERC2981Upgradeable{
         address _receiver,
         uint96 _royaltyFeesInBips,
         uint256 _tokenId
-    ) public onlyOwner {
+    ) public onlyCreator(_tokenId) {
         require(
             _royaltyFeesInBips <= 5000,
             "Royalty value must be between 0% and 50%"

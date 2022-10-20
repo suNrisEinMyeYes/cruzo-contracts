@@ -412,16 +412,17 @@ contract CruzoMarket is
         uint256 _tokenId,
         uint256 _value
     ) internal {
+        uint256 valueWithoutMarketplaceCommission = _value * (10000 - uint256(serviceFee)) / 10000;
         (address royaltyReciever, uint256 royaltyAmount) = IERC2981Upgradeable(
             _tokenAddress
-        ).royaltyInfo(_tokenId, _value * (10000 - uint256(serviceFee)) / 10000);
+        ).royaltyInfo(_tokenId, valueWithoutMarketplaceCommission);
         AddressUpgradeable.sendValue(
             payable(royaltyReciever),
             royaltyAmount
         );
         AddressUpgradeable.sendValue(
             payable(_seller),
-            (_value * (10000 - uint256(serviceFee))) / 10000 - royaltyAmount
+            valueWithoutMarketplaceCommission - royaltyAmount
         );
     }
 }
