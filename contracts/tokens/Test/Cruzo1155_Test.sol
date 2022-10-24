@@ -2,8 +2,9 @@
 pragma solidity ^0.8.6;
 
 import "../ERC1155URI.sol";
+import "@openzeppelin/contracts-upgradeable/token/common/ERC2981Upgradeable.sol"; 
 
-contract Cruzo1155_v2 is Initializable, ERC1155URI {
+contract Cruzo1155_v2 is Initializable, ERC1155URI, ERC2981Upgradeable{
     address public marketAddress;
 
     string public name;
@@ -23,6 +24,7 @@ contract Cruzo1155_v2 is Initializable, ERC1155URI {
         __Pausable_init();
         __ERC1155Supply_init();
         __ERC1155_init(_baseMetadataURI);
+        __ERC2981_init();
         setBaseURI(_baseMetadataURI);
         marketAddress = _marketAddress;
         name = _name;
@@ -71,13 +73,12 @@ contract Cruzo1155_v2 is Initializable, ERC1155URI {
         string memory _uri,
         bytes memory _data
     ) internal returns (uint256) {
+        require(creators[_tokenId] == address(0), "Token is already created");
         creators[_tokenId] = _msgSender();
 
         if (bytes(_uri).length > 0) {
             _setTokenURI(_tokenId, _uri);
         }
-        creators[_tokenId] = _msgSender();
-
         return _mintToken(_tokenId, _amount, _to, _data);
     }
 
@@ -94,9 +95,13 @@ contract Cruzo1155_v2 is Initializable, ERC1155URI {
         uint256 _amount,
         address _to,
         string memory _uri,
-        bytes memory _data
-    ) public returns (uint256) {
-        return _createToken(_tokenId, _amount, _to, _uri, _data);
+        bytes memory _data,
+        address _royaltyReceiver,
+        uint96 _royaltyFee
+    ) public returns (uint256 tokenId) {
+        tokenId = _createToken(_tokenId, _amount, _to, _uri, _data);
+        setTokenRoyalty(_royaltyReceiver,_royaltyFee,_tokenId);
+        return _tokenId;
     }
 
     /**
@@ -148,8 +153,28 @@ contract Cruzo1155_v2 is Initializable, ERC1155URI {
     function setContractURI(string memory _newURI) external onlyOwner {
         contractURI = _newURI;
     }
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC2981Upgradeable, ERC1155Upgradeable)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
 
-    function check() external pure returns (string memory) {
+    function setTokenRoyalty(
+        address _receiver,
+        uint96 _royaltyFeesInBips,
+        uint256 _tokenId
+    ) internal {
+        require(
+            _royaltyFeesInBips <= 5000,
+            "Royalty value must be between 0% and 50%"
+        );
+
+        _setTokenRoyalty(_tokenId, _receiver, _royaltyFeesInBips);
+    }
+    function check() external pure returns(string memory){
         return "hello";
     }
 }
