@@ -5,8 +5,10 @@ import { Cruzo1155 } from "../typechain/Cruzo1155";
 import { CruzoMarket } from "../typechain/CruzoMarket";
 import { BigNumberish, Contract } from "ethers";
 import { getEvent } from "../utils/getEvent";
-import { RAW_VAULT_FUNCTION_SIGNATURE, RAW_FACTORY_INITIALIZE_SIGNATURE } from "../constants/signatures"
-
+import {
+  RAW_VAULT_FUNCTION_SIGNATURE,
+  RAW_FACTORY_INITIALIZE_SIGNATURE,
+} from "../constants/signatures";
 
 //"8da4ef21b864d2cc526dbdb2a120bd2874c36c9d0a1fb7f8c63d7f7a8b41de8f"
 describe("CruzoMarket", () => {
@@ -44,9 +46,13 @@ describe("CruzoMarket", () => {
     const Cruzo1155 = await ethers.getContractFactory("Cruzo1155");
     const Factory = await ethers.getContractFactory("Cruzo1155Factory");
 
-    market = await upgrades.deployProxy(CruzoMarket, [serviceFee, RAW_VAULT_FUNCTION_SIGNATURE], {
-      kind: "uups",
-    });
+    market = await upgrades.deployProxy(
+      CruzoMarket,
+      [serviceFee, RAW_VAULT_FUNCTION_SIGNATURE],
+      {
+        kind: "uups",
+      }
+    );
     await market.deployed();
 
     beacon = await upgrades.deployBeacon(Cruzo1155);
@@ -149,7 +155,9 @@ describe("CruzoMarket", () => {
         market
           .connect(seller)
           .openTrade(token.address, tokenId, tradeAmount, price)
-      ).revertedWith(`Market__TradeIsAlreadyOpen("${token.address}", ${tokenId}, "${seller.address}")`);
+      ).revertedWith(
+        `Market__TradeIsAlreadyOpen("${token.address}", ${tokenId}, "${seller.address}")`
+      );
     });
     it("Not approved", async () => {
       const tokenId = ethers.BigNumber.from("1");
@@ -389,7 +397,11 @@ describe("CruzoMarket", () => {
         market
           .connect(buyer)
           .buyItem(token.address, tokenId, seller.address, tradeAmount.add("1"))
-      ).revertedWith(`Market__AskedAmountIsBiggerThanTradeAmount(${tradeAmount}, ${tradeAmount.add("1")})`);
+      ).revertedWith(
+        `Market__AskedAmountIsBiggerThanTradeAmount(${tradeAmount}, ${tradeAmount.add(
+          "1"
+        )})`
+      );
     });
 
     it("Ether value sent is incorrect", async () => {
@@ -416,7 +428,9 @@ describe("CruzoMarket", () => {
           .buyItem(token.address, tokenId, seller.address, tradeAmount, {
             value: 0,
           })
-      ).revertedWith(`Market__IncorrectSentEtherValue(${0}, ${tradeAmount.mul(price)})`);
+      ).revertedWith(
+        `Market__IncorrectSentEtherValue(${0}, ${tradeAmount.mul(price)})`
+      );
     });
 
     it("ContractSeller (reentrant call)", async () => {
@@ -458,7 +472,7 @@ describe("CruzoMarket", () => {
     });
   });
 
-  describe("giftTrade", () => {
+  describe("Gift Item From Own Trade", () => {
     it("Should Gift Trade", async () => {
       const tokenId = ethers.BigNumber.from("1");
       const supply = ethers.BigNumber.from("100");
@@ -484,12 +498,19 @@ describe("CruzoMarket", () => {
       await expect(
         market
           .connect(seller)
-          .giftTrade(token.address, tokenId, giftAmount, addressee.address)
+          .giftItem(
+            token.address,
+            tokenId,
+            seller.address,
+            giftAmount,
+            addressee.address
+          )
       )
-        .emit(market, "TradeGifted")
+        .emit(market, "TradeExecuted")
         .withArgs(
           token.address,
           tokenId,
+          seller.address,
           seller.address,
           giftAmount,
           addressee.address
@@ -522,7 +543,13 @@ describe("CruzoMarket", () => {
       await expect(
         market
           .connect(seller)
-          .giftTrade(token.address, tokenId, giftAmount, seller.address)
+          .giftItem(
+            token.address,
+            tokenId,
+            seller.address,
+            giftAmount,
+            seller.address
+          )
       ).revertedWith(`Market__WrongReceiver("${seller.address}")`);
 
       expect(await token.balanceOf(addressee.address, tokenId)).eq(0);
@@ -550,13 +577,18 @@ describe("CruzoMarket", () => {
       await expect(
         market
           .connect(seller)
-          .giftTrade(
+          .giftItem(
             token.address,
             tokenId,
+            seller.address,
             tradeAmount.add("1"),
             addressee.address
           )
-      ).revertedWith(`Market__AskedAmountIsBiggerThanTradeAmount(${tradeAmount}, ${tradeAmount.add(1)})`);
+      ).revertedWith(
+        `Market__AskedAmountIsBiggerThanTradeAmount(${tradeAmount}, ${tradeAmount.add(
+          1
+        )})`
+      );
 
       expect(await token.balanceOf(addressee.address, tokenId)).eq(0);
       expect(await token.balanceOf(market.address, tokenId)).eq(10);
@@ -585,8 +617,16 @@ describe("CruzoMarket", () => {
       await expect(
         market
           .connect(buyer)
-          .giftTrade(token.address, tokenId, giftAmount, seller.address)
-      ).revertedWith(`Market__AskedAmountIsBiggerThanTradeAmount(${0}, ${giftAmount})`);
+          .giftItem(
+            token.address,
+            tokenId,
+            buyer.address,
+            giftAmount,
+            seller.address
+          )
+      ).revertedWith(
+        `Market__AskedAmountIsBiggerThanTradeAmount(${0}, ${giftAmount})`
+      );
 
       expect(await token.balanceOf(addressee.address, tokenId)).eq(0);
       expect(await token.balanceOf(market.address, tokenId)).eq(10);
