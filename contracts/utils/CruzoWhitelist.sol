@@ -1,3 +1,4 @@
+//SPDX-License-Identifier: MIT
 pragma solidity ^0.8.7;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -15,7 +16,7 @@ contract CruzoWhiteList is Ownable, ERC1155Holder {
 
     mapping(address => uint256) restriction;
 
-    event BuyCommited(address, uint256);
+    event BuyCommitted(address, uint256);
 
     constructor(
         bytes32 _merkleRootInitHash,
@@ -68,7 +69,7 @@ contract CruzoWhiteList is Ownable, ERC1155Holder {
             amounts,
             ""
         );
-        emit BuyCommited(msg.sender, _amount);
+        emit BuyCommitted(msg.sender, _amount);
     }
 
     function getTokenId(uint256 _amount)

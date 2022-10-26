@@ -37,7 +37,7 @@ contract Cruzo1155Factory is Context, Ownable {
             address(beacon),
             abi.encodeWithSelector(
                 selector,
-                [_name,_symbol],
+                [_name, _symbol],
                 baseUri,
                 _contractURI,
                 marketAddress,

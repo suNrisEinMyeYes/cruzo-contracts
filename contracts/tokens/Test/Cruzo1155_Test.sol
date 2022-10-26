@@ -5,8 +5,7 @@ import "../ERC1155URI.sol";
 import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/interfaces/IERC2981Upgradeable.sol";
 
-contract Cruzo1155_v2 is Initializable, IERC2981Upgradeable, ERC1155URI{
-
+contract Cruzo1155_v2 is Initializable, IERC2981Upgradeable, ERC1155URI {
     address public marketAddress;
 
     string public name;
@@ -180,31 +179,35 @@ contract Cruzo1155_v2 is Initializable, IERC2981Upgradeable, ERC1155URI{
             royalty = _defaultRoyaltyInfo;
         }
 
-        uint256 royaltyAmount = (_salePrice * royalty.royaltyFraction) / _feeDenominator();
+        uint256 royaltyAmount = (_salePrice * royalty.royaltyFraction) /
+            _feeDenominator();
 
         return (royalty.receiver, royaltyAmount);
     }
 
-      function _setTokenRoyalty(
+    function _setTokenRoyalty(
         uint256 _tokenId,
         address _receiver,
         uint96 _feeNumerator
     ) internal virtual {
-
         require(
             _feeNumerator <= 5000,
             "Royalty value must be between 0% and 50%"
         );
-        require(_feeNumerator <= _feeDenominator(), "ERC2981: royalty fee will exceed salePrice");
+        require(
+            _feeNumerator <= _feeDenominator(),
+            "ERC2981: royalty fee will exceed salePrice"
+        );
         require(_receiver != address(0), "ERC2981: Invalid parameters");
 
         _tokenRoyaltyInfo[_tokenId] = RoyaltyInfo(_receiver, _feeNumerator);
     }
-    
+
     function _feeDenominator() internal pure virtual returns (uint96) {
         return 10000;
     }
-    function check() external pure returns(string memory){
+
+    function check() external pure returns (string memory) {
         return "hello";
     }
 }

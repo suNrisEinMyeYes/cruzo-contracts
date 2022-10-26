@@ -5,7 +5,7 @@ import "./ERC1155URI.sol";
 import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/interfaces/IERC2981Upgradeable.sol";
 
-contract Cruzo1155 is Initializable, IERC2981Upgradeable, ERC1155URI{
+contract Cruzo1155 is Initializable, IERC2981Upgradeable, ERC1155URI {
     address public marketAddress;
 
     string public name;
@@ -110,7 +110,10 @@ contract Cruzo1155 is Initializable, IERC2981Upgradeable, ERC1155URI{
         address _royaltyReceiver,
         uint96 _royaltyFee
     ) public returns (uint256 tokenId) {
-        require(publicMintable || _msgSender() == owner(), "Cruzo1155: not public mintable");
+        require(
+            publicMintable || _msgSender() == owner(),
+            "Cruzo1155: not public mintable"
+        );
         tokenId = _createToken(_tokenId, _amount, _to, _uri, _data);
         _setTokenRoyalty(_tokenId, _royaltyReceiver, _royaltyFee);
         return _tokenId;
@@ -178,27 +181,30 @@ contract Cruzo1155 is Initializable, IERC2981Upgradeable, ERC1155URI{
             royalty = _defaultRoyaltyInfo;
         }
 
-        uint256 royaltyAmount = (_salePrice * royalty.royaltyFraction) / _feeDenominator();
+        uint256 royaltyAmount = (_salePrice * royalty.royaltyFraction) /
+            _feeDenominator();
 
         return (royalty.receiver, royaltyAmount);
     }
 
-      function _setTokenRoyalty(
+    function _setTokenRoyalty(
         uint256 _tokenId,
         address _receiver,
         uint96 _feeNumerator
     ) internal virtual {
-
         require(
             _feeNumerator <= 5000,
             "Royalty value must be between 0% and 50%"
         );
-        require(_feeNumerator <= _feeDenominator(), "ERC2981: royalty fee will exceed salePrice");
+        require(
+            _feeNumerator <= _feeDenominator(),
+            "ERC2981: royalty fee will exceed salePrice"
+        );
         require(_receiver != address(0), "ERC2981: Invalid parameters");
 
         _tokenRoyaltyInfo[_tokenId] = RoyaltyInfo(_receiver, _feeNumerator);
     }
-    
+
     function _feeDenominator() internal pure virtual returns (uint96) {
         return 10000;
     }
