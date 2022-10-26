@@ -14,7 +14,7 @@ async function main() {
 
   const merkleRoot = (await generateMerkleTree()).getHexRoot()
 
-  const tokenAddress = getAddress(chainId)!.token;
+  const tokenAddress = getAddress(chainId)!.wlToken;
   if (!tokenAddress) {
     throw "Token address is undefined, terminating";
   }
