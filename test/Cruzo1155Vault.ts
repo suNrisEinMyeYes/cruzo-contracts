@@ -82,7 +82,8 @@ describe("CruzoVault", () => {
                 .create(
                     tokenDetails.name,
                     tokenDetails.symbol,
-                    tokenDetails.collectionURI
+                    tokenDetails.collectionURI,
+                    true
                 );
             const createTokenReceipt = await createTokenTx.wait();
             const createTokenEvent = getEvent(createTokenReceipt, "NewTokenCreated");
@@ -93,7 +94,7 @@ describe("CruzoVault", () => {
             expect(
                 await token
                     .connect(seller)
-                    .create(tokenId, supply, seller.address, "", [])
+                    .create(tokenId, supply, seller.address, "", [], seller.address, 0)
             );
             await expect(
                 market
@@ -117,7 +118,8 @@ describe("CruzoVault", () => {
                 .create(
                     tokenDetails.name,
                     tokenDetails.symbol,
-                    tokenDetails.collectionURI
+                    tokenDetails.collectionURI,
+                    true
                 );
             const createTokenReceipt = await createTokenTx.wait();
             const createTokenEvent = getEvent(createTokenReceipt, "NewTokenCreated");
@@ -128,7 +130,7 @@ describe("CruzoVault", () => {
             expect(
                 await token
                     .connect(seller)
-                    .create(tokenId, supply, seller.address, "", [])
+                    .create(tokenId, supply, seller.address, "", [], seller.address, 0)
             );
             await expect(
                 market
@@ -148,7 +150,8 @@ describe("CruzoVault", () => {
                 .create(
                     tokenDetails.name,
                     tokenDetails.symbol,
-                    tokenDetails.collectionURI
+                    tokenDetails.collectionURI,
+                    true
                 );
             const createTokenReceipt = await createTokenTx.wait();
             const createTokenEvent = getEvent(createTokenReceipt, "NewTokenCreated");
@@ -156,11 +159,10 @@ describe("CruzoVault", () => {
                 "Cruzo1155",
                 createTokenEvent.args?.tokenAddress
             );
-            expect(await token.connect(owner).setDefaultRoyaltyInfo(royaltyReceiver.address, royaltyFee));
             expect(
                 await token
                     .connect(seller)
-                    .create(tokenId, supply, seller.address, "", [])
+                    .create(tokenId, supply, seller.address, "", [], royaltyReceiver.address, royaltyFee)
             );
             await expect(
                 market
@@ -199,7 +201,8 @@ describe("CruzoVault", () => {
                 .create(
                     tokenDetails.name,
                     tokenDetails.symbol,
-                    tokenDetails.collectionURI
+                    tokenDetails.collectionURI,
+                    true
                 );
             const createTokenReceipt = await createTokenTx.wait();
             const createTokenEvent = getEvent(createTokenReceipt, "NewTokenCreated");
@@ -211,7 +214,7 @@ describe("CruzoVault", () => {
             expect(
                 await token
                     .connect(seller)
-                    .create(tokenId, supply, seller.address, "", [])
+                    .create(tokenId, supply, seller.address, "", [], seller.address, 0)
             );
             await expect(
                 market
@@ -238,7 +241,8 @@ describe("CruzoVault", () => {
                 .create(
                     tokenDetails.name,
                     tokenDetails.symbol,
-                    tokenDetails.collectionURI
+                    tokenDetails.collectionURI,
+                    true
                 );
             const createTokenReceipt = await createTokenTx.wait();
             const createTokenEvent = getEvent(createTokenReceipt, "NewTokenCreated");
@@ -249,7 +253,7 @@ describe("CruzoVault", () => {
             expect(
                 await token
                     .connect(seller)
-                    .create(tokenId, supply, seller.address, "", [])
+                    .create(tokenId, supply, seller.address, "", [], seller.address, 0)
             );
             await expect(
                 market
@@ -282,7 +286,8 @@ describe("CruzoVault", () => {
                 .create(
                     tokenDetails.name,
                     tokenDetails.symbol,
-                    tokenDetails.collectionURI
+                    tokenDetails.collectionURI,
+                    true
                 );
             const createTokenReceipt = await createTokenTx.wait();
             const createTokenEvent = getEvent(createTokenReceipt, "NewTokenCreated");
@@ -294,7 +299,7 @@ describe("CruzoVault", () => {
             expect(
                 await token
                     .connect(seller)
-                    .create(tokenId, supply, seller.address, "", [])
+                    .create(tokenId, supply, seller.address, "", [], seller.address, 0)
             );
             await expect(
                 market
