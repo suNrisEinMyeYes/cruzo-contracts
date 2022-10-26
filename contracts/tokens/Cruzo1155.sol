@@ -174,7 +174,6 @@ contract Cruzo1155 is Initializable, IERC2981Upgradeable, ERC1155URI{
         returns (address, uint256)
     {
         RoyaltyInfo memory royalty = _tokenRoyaltyInfo[_tokenId];
-
         if (royalty.receiver == address(0)) {
             royalty = _defaultRoyaltyInfo;
         }
@@ -189,6 +188,7 @@ contract Cruzo1155 is Initializable, IERC2981Upgradeable, ERC1155URI{
         address _receiver,
         uint96 _feeNumerator
     ) internal virtual {
+
         require(
             _feeNumerator <= 5000,
             "Royalty value must be between 0% and 50%"

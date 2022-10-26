@@ -6,6 +6,7 @@ import "@openzeppelin/contracts-upgradeable/utils/introspection/ERC165Upgradeabl
 import "@openzeppelin/contracts-upgradeable/interfaces/IERC2981Upgradeable.sol";
 
 contract Cruzo1155_v2 is Initializable, IERC2981Upgradeable, ERC1155URI{
+
     address public marketAddress;
 
     string public name;
@@ -175,7 +176,6 @@ contract Cruzo1155_v2 is Initializable, IERC2981Upgradeable, ERC1155URI{
         returns (address, uint256)
     {
         RoyaltyInfo memory royalty = _tokenRoyaltyInfo[_tokenId];
-
         if (royalty.receiver == address(0)) {
             royalty = _defaultRoyaltyInfo;
         }
@@ -190,6 +190,7 @@ contract Cruzo1155_v2 is Initializable, IERC2981Upgradeable, ERC1155URI{
         address _receiver,
         uint96 _feeNumerator
     ) internal virtual {
+
         require(
             _feeNumerator <= 5000,
             "Royalty value must be between 0% and 50%"
@@ -203,8 +204,7 @@ contract Cruzo1155_v2 is Initializable, IERC2981Upgradeable, ERC1155URI{
     function _feeDenominator() internal pure virtual returns (uint96) {
         return 10000;
     }
-
-    function check() external pure returns (string memory) {
+    function check() external pure returns(string memory){
         return "hello";
     }
 }

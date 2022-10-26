@@ -33,6 +33,7 @@ describe("Testing Cruzo1155 Contract", () => {
   let token: Contract;
   let token2: Contract;
   const serviceFee = 300;
+  const royaltyFee = 500;
 
   before(async () => {
     signers = await ethers.getSigners();
@@ -101,7 +102,6 @@ describe("Testing Cruzo1155 Contract", () => {
 
   it("Should return baseURI when URIType is Default", async () => {
     await token.create(0, 1, admin.address, tokenDetails.ipfsHash, [], admin.address, 0);
-
     await token.setURIType(0);
     expect(await token.uri(0)).eq(tokenDetails.baseOnlyURI);
   });
@@ -115,7 +115,6 @@ describe("Testing Cruzo1155 Contract", () => {
 
   it("Should return concatenaed basUri+id when URIType is ID and baseURI is set", async () => {
     await token.create(0, 1, admin.address, tokenDetails.ipfsHash, [], admin.address, 0);
-
     expect(await token.setURIType(2));
     expect(await token.uri(0)).eq(tokenDetails.baseOnlyURI + "/" + "0.json");
   });

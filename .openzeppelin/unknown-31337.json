@@ -19,6 +19,7 @@
     {
       "address": "0xBEc49fA140aCaA83533fB00A2BB19bDdd0290f25",
       "txHash": "0x509dd43e08080e37fab6d0a26f12c7c8833f56117a326151b8f05119750941a9",
+
       "kind": "uups"
     },
     {
@@ -1851,7 +1852,7 @@
             "src": "@openzeppelin\\contracts-upgradeable\\access\\OwnableUpgradeable.sol:87"
           },
           {
-            "label": "marketAddress",
+            "label": "_status",
             "offset": 0,
             "slot": "351",
             "type": "t_address",
@@ -1859,7 +1860,7 @@
             "src": "contracts\\utils\\Test\\Cruzo1155VaultTest.sol:72"
           },
           {
-            "label": "vaultedTokens",
+            "label": "__gap",
             "offset": 0,
             "slot": "352",
             "type": "t_mapping(t_bytes32,t_struct(TokenCredentials)6325_storage)",
@@ -1884,8 +1885,8 @@
             "label": "bool",
             "numberOfBytes": "1"
           },
-          "t_bytes32": {
-            "label": "bytes32",
+          "t_mapping(t_address,t_mapping(t_uint256,t_mapping(t_address,t_struct(Trade)4006_storage)))": {
+            "label": "mapping(address => mapping(uint256 => mapping(address => struct CruzoMarket.Trade)))",
             "numberOfBytes": "32"
           },
           "t_mapping(t_bytes32,t_struct(TokenCredentials)6325_storage)": {
@@ -1896,25 +1897,23 @@
             "label": "struct Cruzo1155Vault_Test.TokenCredentials",
             "members": [
               {
-                "label": "tokenAddress",
-                "type": "t_address",
+                "label": "amount",
+                "type": "t_uint256",
                 "offset": 0,
                 "slot": "0"
               },
               {
-                "label": "tokenId",
+                "label": "price",
                 "type": "t_uint256",
                 "offset": 0,
                 "slot": "1"
-              },
-              {
-                "label": "amount",
-                "type": "t_uint256",
-                "offset": 0,
-                "slot": "2"
               }
             ],
-            "numberOfBytes": "96"
+            "numberOfBytes": "64"
+          },
+          "t_uint16": {
+            "label": "uint16",
+            "numberOfBytes": "2"
           },
           "t_uint256": {
             "label": "uint256",
