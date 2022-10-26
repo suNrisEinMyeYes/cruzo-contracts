@@ -36,6 +36,10 @@
 | Klaytn     | mainnet | klaytnMainnet     |
 | Klaytn     | testnet | klaytnTestnet     |
 
+## Configuration
+
+ - `ADDRESS_MAPPING_FILENAME` should point to environment specific JSON file
+
 ## Scripts
 
 ### Compile
